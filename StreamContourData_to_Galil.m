@@ -25,9 +25,10 @@ n=1;
 i=1;
 j=0;
 
+% hwait=waitbar(0,'Streaming Coordinates To Galil')
 while n<cmdArrays+1
     buffsize=g.GCommand('CM?');
-
+% waitbar(n/(cmdArrays+1))
     if(str2num(buffsize.string) >= TargetBuff)
 
         if(length(posStr)<j+TargetBuff)
@@ -46,7 +47,9 @@ while n<cmdArrays+1
         %"Buffer_size"
         %str2num(buffsize.string)
     end
-
+% if ~ishandle(hwait)
+%     break
+% end
 end
 
 
@@ -54,6 +57,10 @@ buffsizen=1;
 while buffsizen~=511
     buffsize=g.GCommand('CM?');
     buffsizen=str2num(buffsize.string);
+%     waitbar(buffsizen/(511),'Draining Buffer');
+%     if ~ishandle(hwait)
+%     break
+% end
 end
 g.GCommand('CD 0,0,0,,0,0,0=0') % end of counter buffer
 g.GCommand('ST')

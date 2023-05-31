@@ -57,7 +57,7 @@ end
 
 linkv=gradient(linkl)/dt;
 linkacc=gradient(linkv)/dt;
-
+hex_obj.link_vector=link;
 
 hex_path.pose_dt=[r_dt;E_dt]; %Rate of change of platform pose
 hex_path.pose_ddt=[r_ddt;E_ddt]; %Platform accelerations in world frame

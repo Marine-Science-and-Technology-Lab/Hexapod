@@ -11,9 +11,7 @@ function hex_obj = InverseKinematics_hexapod(hex_obj,hex_setup)
     plat = hex_obj.plat0; % need the locations of the platform joints in platform frame (assume when E=0, the world and platform frames are aligned)
     base_link=hex_obj.base_link;
     plat_link=hex_obj.plat_link_0;
-    base(3,:)=base(3,:)-hex_obj.Base_Zlink;
-    plat(3,:)=base(3,:)+hex_obj.Platform_Zlink;
-
+    
     z_min = hex_obj.z; % need minimum vertical distance for visualization purposes
     MinLength = hex_setup.Actuators.MinLength     ; % need minimum link length
     MaxLength= hex_setup.Actuators.MaxLength      ; % Max actuator link length
@@ -33,8 +31,8 @@ function hex_obj = InverseKinematics_hexapod(hex_obj,hex_setup)
 
     for i = 1:6
         p_W(:,i) = plat_CM + R*(plat(:,i)); %Platform vertices
-        l_W(:,i)= plat_CM+ R*(plat_link(:,i)); %Platform vertices
-        link(:,i) = l_W(:,i) - (base_link(:,i)-[0;0;hex_obj.Base_Zlink]);
+        l_W(:,i)= plat_CM+ R*(plat_link(:,i)); %Platform Ujoint Locations
+        link(:,i) = l_W(:,i) - (base_link(:,i));
         q(i) = sqrt(link(:,i)'*link(:,i));
         l_hat(:,i) = link(:,i)./q(i);
         check(i) = q(i) < MinLength || q(i) > MaxLength;

@@ -17,8 +17,8 @@ hex_obj.Cam=[0; 0; 0;]; % Camera position in base frame
 hex_obj.pose=[0; 0; 0; 0; 0; 0]; %Pose of end effector
 hex_obj.pose_platform=[0; 0; 0; 0; 0; 0]; % Pose of platform
 % Link joints on base in base-fixed frame (base-fixed frame = world frame)
-hex_obj.Platform_Zlink=0.04713; % Height to axis of U joint yoke on platform
-hex_obj.Base_Zlink=0.04564246; % Height to axis of U joint yoke on base
+hex_obj.Base_Zlink=0.04713; % Height to axis of U joint yoke on platform
+hex_obj.Platform_Zlink=0.0455422%0.04564246; % Height to axis of U joint yoke on base
 b_W = zeros(3,1); % origin of base-fixed frame and world frame
 the_b_r1 = 0-the_dr/2; % angular position of the first link; [rad]
 

@@ -13,11 +13,13 @@ r_rel=hex_obj.r_rel;
         r_ddt = gradient(r_dt)./dt;
         E_ddt = gradient(E_dt)./dt;
 
- base = hex_obj.base; % need the locations of the base joints in world frame
- base_link=hex_obj.base_link;
+  base = hex_obj.base; % need the locations of the base joints in world frame
+ base_link=hex_obj.base_link; % Attachment points of base U-joints. Includes vertical offset equal to base_Zlink parameter (set in initialization function)
       
  plat = hex_obj.plat0; % need the locations of the platform joints in platform frame (assume when E=0, the world and platform frames are aligned)
-    plat_link=hex_obj.plat_link_0;
+    plat_link=hex_obj.plat_link_0; % Attachment points of platform-side Ujoints in platform coordinates. Includes local plat_Zlink offset for yoke height.
+   
+    
     z_min = hex_obj.z; % need minimum vertical distance for visualization purposes
     L0 = hex_obj.L0; % need minimum link length
     dL = hex_obj.dL; % need link stroke length
@@ -36,9 +38,9 @@ for j = 1:size(r,2)
     l_hat = zeros(3,6); % unit vectors describing longitudinal axis of links (base to platform) resolved in world frame
 
     for i = 1:6
-        p_W(:,i) = plat_CM + R*plat(:,i);
-        l_W(:,i)= plat_CM+ R*(plat_link(:,i)); %Platform vertices
-        link(:,i) = l_W(:,i) - (base_link(:,i)-[0;0;hex_obj.Base_Zlink]);
+        p_W(:,i) = plat_CM + R*plat(:,i); %Platform vertices.
+        l_W(:,i)= plat_CM+ R*(plat_link(:,i)); %Platform yoke centers
+        link(:,i) = l_W(:,i) - (base_link(:,i));
         q(i) = sqrt(link(:,i)'*link(:,i));
         l_hat(:,i) = link(:,i)./q(i);
     hex_path.lhat(:,i,j)=l_hat(:,i);

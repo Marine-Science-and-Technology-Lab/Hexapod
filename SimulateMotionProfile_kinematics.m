@@ -28,6 +28,7 @@ r_rel=hex_obj.r_rel;
 for j = 1:size(r,2)
 
      R = E2R(E(:,j)); % convert Euler angles to rotation matrix
+     hex_path.rmatrix(:,:,j)=R;
     plat_CM = r(:,j) - R*r_rel; % platform CM position resolved in world frame; [m]
 
     link = zeros(3,6); % each column is a vector describing a link

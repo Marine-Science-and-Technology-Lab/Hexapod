@@ -55,7 +55,7 @@ for j = 1:size(r,2)
         link(:,i) = l_W(:,i) - (base_link(:,i));
         q(i) = sqrt(link(:,i)'*link(:,i));
         l_hat(:,i) = link(:,i)./q(i);
-        hex_path.lhat(:,i,j)=l_hat(:,i);
+    hex_path.lhat(:,i,j)=l_hat(:,i);
 
         % Calculating U-joint Kinematics for joint AB and joint CD
          % Computing AB joint Kinematics
@@ -66,28 +66,24 @@ for j = 1:size(r,2)
         v_star_temp = v_temp - (v_temp.'*w_hat)*w_hat;
         angle_theta(i) = acos((v_temp).'*v_star_temp/(norm(v_temp)*norm(v_star_temp)));
         angle_phi(i) = acos((-1*l_temp).'*c_temp/(norm(-1*l_temp)*norm(c_temp)));
-        % v(:,i) = v_temp;
-        % c(:,i) = c_temp;
-        % v_star(:,i) = v_star_temp;
+        v(:,i) = v_temp;
+        c(:,i) = c_temp;
+        v_star(:,i) = v_star_temp;
     
         % Computing CD joint kinematics
-        q_temp = cross(v_temp,z_dir);
+        z_dir = R(:,3)
+        q_temp = cross(v_temp,joint_CD.w_hat);
         r_temp = cross(v_temp,l_temp);
-        v_star_temp2 = v_temp - (v_temp.'*z_dir)*z_dir;
+        v_star_temp2 = v_temp - (v_temp.'*joint_CD.w_hat)*joint_CD.w_hat;
         angle_alpha(i) = acos((-1*r_temp).'*q_temp/(norm(-1*r_temp)*norm(q_temp)));
         angle_psi(i) = acos((v_temp).'*v_star_temp2/(norm(v_temp)*norm(v_star_temp2)));
-        %v_star2(:,i) = v_star_temp2;
-        % q(:,i) = q_temp;
-        % r(:,i) = r_temp;
+        v_star2(:,i) = v_star_temp2;
+        q(:,i) = q_temp;
+        r(:,i) = r_temp;
     end
 
     hex_path.plati(:,:,j)=p_W;
     hex_obj.plat_link_i=l_W;
-
-    hex_path.joint_AB.angle_theta(:,:,j) = angle_theta;
-    hex_path.joint_AB.angle_phi(:,:,j) =angle_phi;
-    hex_path.joint_CD.angle_alpha(:,:,j) = angle_alpha;
-    hex_path.joint_CD.angle_psi(:,:,j) = angle_psi;
 
     if sum(q >= L0) ~= 6 || sum(q <= L0+dL) ~= 6
         check(j) = 1;
@@ -97,7 +93,10 @@ for j = 1:size(r,2)
     
 end
 
-
+hex_path.joint_AB.angle_theta = angle_theta;
+hex_path.joint_AB.angle_phi =angle_phi;
+hex_path.joint_CD.angle_alpha = angle_alpha;
+hex_path.joint_CD.angle_psi = angle_psi;
 
 linkv=gradient(linkl)/dt;
 linkacc=gradient(linkv)/dt;

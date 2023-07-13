@@ -11,14 +11,14 @@ hex_obj.L0 = 0.769813; % minimum link (linear actuator) length; [m]
 
 % hex_obj.MaxLength=hex_obj.L0+hex_obj.dL;
 % hex_obj.Home0=[0;0;-0.95694]; %Home position of hexapod platform, expressed in base frame.
-hex_obj.Home=[0;0;-0.95694]; %Home position of hexapod end effector, expressed in base frame.
+hex_obj.Home=[0;0;-0.966446]; %Home position of hexapod end effector, expressed in base frame.
 hex_obj.Home_platform=[hex_obj.Home]; % Home position of hexapod platform, expressed in base frame
 hex_obj.Cam=[0; 0; 0;]; % Camera position in base frame
 hex_obj.pose=[0; 0; 0; 0; 0; 0]; %Pose of end effector
 hex_obj.pose_platform=[0; 0; 0; 0; 0; 0]; % Pose of platform
 % Link joints on base in base-fixed frame (base-fixed frame = world frame)
-hex_obj.Base_Zlink=0.04713; % Height to axis of U joint yoke on platform
-hex_obj.Platform_Zlink=0.0455422%0.04564246; % Height to axis of U joint yoke on base
+hex_obj.Base_Zlink=0.0471297; % Height to axis of U joint yoke on platform
+hex_obj.Platform_Zlink=0.041024%0.04564246; % Height to axis of U joint yoke on base
 b_W = zeros(3,1); % origin of base-fixed frame and world frame
 the_b_r1 = 0-the_dr/2; % angular position of the first link; [rad]
 
@@ -78,7 +78,17 @@ hex_setup.Actuators.MaxThrust=2224; %mm/s
 hex_setup.Actuators.MaxAcceleration=9.810; %m/s^2
 hex_setup.Actuators.MinLength=hex_obj.L0;
 hex_setup.Actuators.MaxLength=hex_obj.L0+hex_obj.dL;
-hex_setup.Actuators.DatumLength=0.989813; % Distance between U-joint yokes at home position
+hex_setup.Actuators.DatumLength=1.0397604; % Distance between U-joint yokes at home position (AVERAGED)
+hex_setup.Actuators.DatumLength_Individual=[1.039726542
+1.039777342
+1.039777342
+1.039701142
+1.039777342
+1.039802742];
+
+hex_setup.UhatRotations=[]
+YokeA_Rotations=[-70 70 50 -170 170 -50]; %Rotation angles of yoke A in world frame
+hex_setup.YokeA.Uhat=[-70 70 50 -170 170 -50]
 
 hex_obj.axisCt=(hex_obj.axisPos-hex_setup.Actuators.DatumLength)*hex_setup.Actuators.CountsPerM;
 hex_obj.axisRel=hex_obj.axisPos-hex_setup.Actuators.DatumLength;

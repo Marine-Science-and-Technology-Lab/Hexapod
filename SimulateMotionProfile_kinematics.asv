@@ -71,12 +71,12 @@ for j = 1:size(r,2)
         % v_star(:,i) = v_star_temp;
     
         % Computing CD joint kinematics
-        q_temp = R*u_temp;
+        q_temp = rmatrix*joint_AB.u_hat(:,i);
         v_temp_CD = cross(q_temp,l_temp);
         r_temp = cross(q_temp,v_temp_CD);
         v_star_temp2 = v_temp_CD - (v_temp_CD.'*z_dir)*z_dir;
+        angle_alpha(i) = acos((-1*r_temp).'*q_temp/(norm(-1*r_temp)*norm(q_temp)));
         angle_psi(i) = acos((v_temp_CD).'*v_star_temp2/(norm(v_temp_CD)*norm(v_star_temp2)));
-        angle_alpha(i) = acos((-1*l_temp).'*r_temp/(norm(-1*l_temp)*norm(r_temp)));
         %v_star2(:,i) = v_star_temp2;
         % q(:,i) = q_temp;
         % r(:,i) = r_temp;

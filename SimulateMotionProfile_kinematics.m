@@ -34,6 +34,7 @@ r_rel=hex_obj.r_rel;
     % w_hat for the AB joint
     w_hat = [0;0;-1];
    
+    clearvars plati lhat joint_AB joint_CD;
 
 for j = 1:size(r,2)
 
@@ -85,20 +86,20 @@ for j = 1:size(r,2)
     hex_path.plati(:,:,j)=p_W;
     hex_obj.plat_link_i=l_W;
 
-    hex_path.joint_AB.angle_theta(:,:,j) = angle_theta;
-    hex_path.joint_AB.angle_phi(:,:,j) =angle_phi;
-    hex_path.joint_CD.angle_alpha(:,:,j) = angle_alpha;
-    hex_path.joint_CD.angle_psi(:,:,j) = angle_psi;
+joint_AB.angle_theta(:,j) = angle_theta;
+    joint_AB.angle_phi(:,j) =angle_phi;
+   joint_CD.angle_alpha(:,j) = angle_alpha;
+   joint_CD.angle_psi(:,j) = angle_psi;
 
-    if sum(q >= L0) ~= 6 || sum(q <= L0+dL) ~= 6
-        check(j) = 1;
-    end
+%     if sum(q >= L0) ~= 6 || sum(q <= L0+dL) ~= 6
+%         check(j) = 1;
+%     end
     linkl(:,j)=q(:);
 
     
 end
 
-
+hex_path.joint_AB=joint_AB; hex_path.joint_CD=joint_CD;
 
 linkv=gradient(linkl)/dt;
 linkacc=gradient(linkv)/dt;
@@ -110,7 +111,12 @@ hex_path.axis_t=linkl;
 hex_path.axis_dt=linkv;
 hex_path.axis_ddt=linkacc;
 
-[hex_path.axis_cts null]=LengthToEncoder(hex_setup,linkl)
+[hex_path.axis_cts null]=LengthToEncoder(hex_setup,linkl);
+
+hex_path.joint_separation.AB=hex_setup.Joint_Interp.SCAT_AB(rad2deg(hex_path.joint_AB.angle_theta),rad2deg(hex_path.joint_AB.angle_phi));
+hex_path.joint_separation.CD=hex_setup.Joint_Interp.SCAT_CD(rad2deg(hex_path.joint_CD.angle_alpha),rad2deg(hex_path.joint_CD.angle_psi));
+
+hex_path.collisioncheck=max([hex_path.joint_separation.AB' hex_path.joint_separation.CD']<=hex_setup.collisionthreshold);
 
 % [fname fpath]=uiputfile()
 % save([fpath fname],'hex_path','-mat')

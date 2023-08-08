@@ -105,7 +105,6 @@ hex_setup.Effector.Ixx=10;
 hex_setup.Effector.Iyy=10; 
 hex_setup.Effector.Izz=10; 
 
-
 %External forces, specified in end-effector frame
 hex_setup.F_ex.Fx=0;
 hex_setup.F_ex.Fy=0;
@@ -115,3 +114,6 @@ hex_setup.F_ex.My=0;
 hex_setup.F_ex.Mz=0;
 
 hex_obj.Z_water=-(46-4)*0.0254; % Location of water surface in platform frame
+
+
+hex_setup.collisionthreshold=0.5; % minimum allowable separation distance between Ujoint yokes

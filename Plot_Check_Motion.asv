@@ -88,12 +88,14 @@ plot(xlim,hex_setup.Actuators.MaxAcceleration*ones(2,1),'--k','LineWidth',2);
 plot(xlim,-hex_setup.Actuators.MaxAcceleration*ones(2,1),'--k','LineWidth',2);
 
 fig.a(8)=subplot(3,6,[11 12]);
-plot(T,[hex_path.joint_separation.AB' hex_path.joint_separation.CD']);
+plot(T,[hex_path.joint_separation.AB' hex_path.joint_separation.']);
 ylabel('mm');
 xlabel('time, s');
 title('Yoke Separation');
 hold on;
-plot(xlim,hex_setup.collisionthreshold*ones(2,1),'--k','LineWidth',2);
+plot(xlim,hex_setup.Actuators.MaxAcceleration*ones(2,1),'--k','LineWidth',2);
+plot(xlim,-hex_setup.Actuators.MaxAcceleration*ones(2,1),'--k','LineWidth',2);
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -4,7 +4,7 @@ function [hex_path]=SimulateMotionProfile_kinematics(hex_obj,hex_setup,hex_path)
 Time=hex_path.T;
 dt=hex_path.dt;
 
-r0=hex_path.pose_t(1:3,:); E=(hex_path.pose_t(4:6,:));
+r0=hex_path.pose_t(1:3,:); E=(hex_path.pose_t(4:6,:)); % Timeseries of end effector pose, measured from home position;
 r=r0+repmat(hex_obj.Home,1,size(r0,2));
 r_rel=hex_obj.r_rel;
 

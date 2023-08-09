@@ -87,13 +87,23 @@ hold on;
 plot(xlim,hex_setup.Actuators.MaxAcceleration*ones(2,1),'--k','LineWidth',2);
 plot(xlim,-hex_setup.Actuators.MaxAcceleration*ones(2,1),'--k','LineWidth',2);
 
-fig.a(8)=subplot(3,6,[11 12]);
-plot(T,[hex_path.joint_separation.AB' hex_path.joint_separation.CD']);
+fig.a(8)=subplot(3,6,[11]);
+plot(T,[hex_path.joint_separation.AB']);
 ylabel('mm');
 xlabel('time, s');
-title('Yoke Separation');
+title('Yoke AB Separation');
 hold on;
 plot(xlim,hex_setup.collisionthreshold*ones(2,1),'--k','LineWidth',2);
+legend({'AB_1','AB_2','AB_3','AB_4','AB_5','AB_6'},'NumColumns',1)
+
+fig.a(13)=subplot(3,6,[12]);
+plot(T,[hex_path.joint_separation.CD']);
+ylabel('mm');
+xlabel('time, s');
+title('Yoke CD Separation');
+hold on;
+plot(xlim,hex_setup.collisionthreshold*ones(2,1),'--k','LineWidth',2);
+legend({'CD_1','CD_2','CD_3','CD_4','CD_5','CD_6'},'NumColumns',1)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

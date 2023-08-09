@@ -7,7 +7,7 @@ base_r = 0.8; % radius of the base links; [m]
 plat_r = 0.4; % radius of the platform links; [m]
 hex_obj.r_rel = [0; 0; 0]; % end effector position relative to plaform CM resolved in platform-fixed frame; [m]
 hex_obj.dL = 0.4394; % maximum link (linear actuator) stroke length; [m]
-hex_obj.L0 = 0.769813; % minimum link (linear actuator) length; [m]
+hex_obj.L0 = 0.769813+0.04936; % minimum link (linear actuator) length; [m] Includes new spindle length
 
 % hex_obj.MaxLength=hex_obj.L0+hex_obj.dL;
 % hex_obj.Home0=[0;0;-0.95694]; %Home position of hexapod platform, expressed in base frame.

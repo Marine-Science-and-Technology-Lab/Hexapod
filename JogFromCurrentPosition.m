@@ -1,7 +1,7 @@
 function [hex_path newpose]=JogFromCurrentPosition(hex_obj,hex_setup,hex_path,jogdist)
-jogdist
+% jogdist
 jogdist(4:6)=deg2rad(jogdist(4:6));
-currentpose=hex_obj.pose %Grab current pose of end effector
+currentpose=[0;0;0;0;0;0];%hex_obj.pose %Grab current pose of end effector
 
 newpose=currentpose+jogdist %specify new pose
 

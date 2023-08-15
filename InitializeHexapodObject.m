@@ -80,9 +80,9 @@ hex_setup.Actuators.MinLength=hex_obj.L0;
 hex_setup.Actuators.MaxLength=hex_obj.L0+hex_obj.dL;
 hex_setup.Actuators.DatumLength=1.0397604; % Distance between U-joint yokes at home position (AVERAGED)
 hex_setup.Actuators.DatumLength_Individual=[1.039726542
+1.039688442
 1.039777342
-1.039777342
-1.039701142
+1.039650342
 1.039777342
 1.039802742];
 

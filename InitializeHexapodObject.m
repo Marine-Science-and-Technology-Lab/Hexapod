@@ -11,14 +11,14 @@ hex_obj.L0 = 0.769813+0.04936; % minimum link (linear actuator) length; [m] Incl
 
 % hex_obj.MaxLength=hex_obj.L0+hex_obj.dL;
 % hex_obj.Home0=[0;0;-0.95694]; %Home position of hexapod platform, expressed in base frame.
-hex_obj.Home=[0;0;-0.966446]; %Home position of hexapod end effector, expressed in base frame.
+hex_obj.Home=[0;0;-0.966446+0.000250667]; %Home position of hexapod end effector, expressed in base frame.
 hex_obj.Home_platform=[hex_obj.Home]; % Home position of hexapod platform, expressed in base frame
 hex_obj.Cam=[0; 0; 0;]; % Camera position in base frame
 hex_obj.pose=[0; 0; 0; 0; 0; 0]; %Pose of end effector
 hex_obj.pose_platform=[0; 0; 0; 0; 0; 0]; % Pose of platform
 % Link joints on base in base-fixed frame (base-fixed frame = world frame)
 hex_obj.Base_Zlink=0.0471297; % Height to axis of U joint yoke on platform
-hex_obj.Platform_Zlink=0.041024%0.04564246; % Height to axis of U joint yoke on base
+hex_obj.Platform_Zlink=0.0407797%0.04564246; % Height to axis of U joint yoke on base
 b_W = zeros(3,1); % origin of base-fixed frame and world frame
 the_b_r1 = 0-the_dr/2; % angular position of the first link; [rad]
 

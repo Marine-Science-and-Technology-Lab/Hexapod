@@ -3,7 +3,7 @@ function [] = StreamContourData_to_Galil(g,hex_path)
 yy=hex_path.axis_cts';
 ydiff=diff(round(yy)); %Relative move commands sent to contour buffer
 
-DT_g=round(log2(hex_path.dt*1000));
+DT_g=round(log2(hex_path.dt*1024));
 %CONTOUR 
 g.GInfo
  g.GCommand('ST')

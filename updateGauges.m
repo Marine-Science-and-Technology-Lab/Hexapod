@@ -17,3 +17,11 @@ end
 for j=16:18
     ActuatorPositions{j}.Value=rad2deg(hex_obj.pose(j-12));
 end
+
+for j=1:6
+     ActuatorPositions{j+18}.Value=hex_obj.joint_separation.AB(j);
+end
+
+for j=1:6
+     ActuatorPositions{j+24}.Value=hex_obj.joint_separation.CD(j);
+end

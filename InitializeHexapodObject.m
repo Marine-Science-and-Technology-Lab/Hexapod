@@ -87,7 +87,7 @@ hex_setup.Actuators.DatumLength_Individual=[1.039726542
 1.039802742];
 
 hex_setup.UhatRotations=[]
-YokeA_Rotations=[-70 70 50 -170 170 -50]; %Rotation angles of yoke A in world frame
+hex_setup.YokeA_Rotations=[-70 70 50 -170 170 -50]; %Rotation angles of yoke A in world frame
 hex_setup.YokeA.Uhat=[-70 70 50 -170 170 -50]
 
 hex_obj.axisCt=(hex_obj.axisPos-hex_setup.Actuators.DatumLength)*hex_setup.Actuators.CountsPerM;

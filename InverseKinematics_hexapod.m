@@ -29,6 +29,22 @@ function hex_obj = InverseKinematics_hexapod(hex_obj,hex_setup)
     ex=[1 0 0]';ey=[0 1 0]'; ez=[0 0 1]';
     px=R*ex;py=R*ey; pz=R*ez;
 
+
+
+
+ 
+        % Calculating U-joint Kinematics for joint AB and joint CD
+           % U-joint kinematics
+    ujoint_angle = hex_setup.YokeA_Rotations;
+    % Convert angles to unit vector
+    u_hat = [cosd(ujoint_angle(1)) cosd(ujoint_angle(2)) cosd(ujoint_angle(3)) cosd(ujoint_angle(4)) cosd(ujoint_angle(5)) cosd(ujoint_angle(6));
+    sind(ujoint_angle(1)) sind(ujoint_angle(2)) sind(ujoint_angle(3)) sind(ujoint_angle(4)) sind(ujoint_angle(5)) sind(ujoint_angle(6));
+    0 0 0 0 0 0];
+
+    % w_hat for the AB joint
+    w_hat = [0;0;-1];
+   z_dir = R(:,3);
+
     for i = 1:6
         p_W(:,i) = plat_CM + R*(plat(:,i)); %Platform vertices
         l_W(:,i)= plat_CM+ R*(plat_link(:,i)); %Platform Ujoint Locations
@@ -36,6 +52,26 @@ function hex_obj = InverseKinematics_hexapod(hex_obj,hex_setup)
         q(i) = sqrt(link(:,i)'*link(:,i));
         l_hat(:,i) = link(:,i)./q(i);
         check(i) = q(i) < MinLength || q(i) > MaxLength;
+
+
+    % Computing AB joint Kinematics
+        u_temp = u_hat(:,i);
+        l_temp =l_hat(:,i);
+        v_temp_AB = cross(u_temp,l_temp);
+        c_temp = cross(u_temp,v_temp_AB);
+        v_star_temp = v_temp_AB - (v_temp_AB.'*w_hat)*w_hat;
+        angle_theta(i) = acos((v_temp_AB).'*v_star_temp/(norm(v_temp_AB)*norm(v_star_temp)));
+        angle_phi(i) = acos((-1*l_temp).'*c_temp/(norm(-1*l_temp)*norm(c_temp)));
+
+
+        % Computing CD joint kinematics
+        q_temp = R*u_temp;
+        v_temp_CD = cross(q_temp,l_temp);
+        r_temp = cross(q_temp,v_temp_CD);
+        v_star_temp2 = v_temp_CD - (v_temp_CD.'*z_dir)*z_dir;
+        angle_psi(i) = acos((v_temp_CD).'*v_star_temp2/(norm(v_temp_CD)*norm(v_star_temp2)));
+        angle_alpha(i) = acos((-1*l_temp).'*r_temp/(norm(-1*l_temp)*norm(r_temp)));
+
     end
     
     hex_obj.plat_link_i=l_W;
@@ -46,8 +82,14 @@ function hex_obj = InverseKinematics_hexapod(hex_obj,hex_setup)
 hex_obj.ex=ex; hex_obj.ey=ey; hex_obj.ez=ez;
 hex_obj.px=px; hex_obj.py=py; hex_obj.pz=pz;
 
- 
+ hex_obj.joint_AB.angle_phi=angle_phi;
+ hex_obj.joint_AB.angle_theta=angle_theta;
+ hex_obj.joint_CD.angle_psi=angle_psi;
+ hex_obj.joint_CD.angle_alpha=angle_alpha;
+     
 
- 
+hex_obj.joint_separation.AB=hex_setup.Joint_Interp.SCAT_AB(rad2deg(hex_obj.joint_AB.angle_theta),rad2deg(hex_obj.joint_AB.angle_phi));
+hex_obj.joint_separation.CD=hex_setup.Joint_Interp.SCAT_CD(rad2deg(hex_obj.joint_CD.angle_alpha),rad2deg(hex_obj.joint_CD.angle_psi));
+
 
 end

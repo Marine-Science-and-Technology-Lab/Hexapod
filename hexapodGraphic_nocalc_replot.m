@@ -69,7 +69,6 @@ c=[0 0 0; 0.5 0.5 0.5; 0 0.5 1; 0 0.5 1; 0 0.5 1; 0 0.5 1];
 %         view(ax,40,25);
          hold(ax,'off');
     else
-         'woohoo'
         ax=fig_obj.ax;
 %         delete(fig_obj.Plat); delete(fig_obj.B); delete(fig_obj.C); delete(fig_obj.D); delete(fig_obj.X);delete(fig_obj.Y);delete(fig_obj.Z); delete(fig_obj.x);delete(fig_obj.y);delete(fig_obj.z);delete(fig_obj.xm);delete(fig_obj.ym);delete(fig_obj.zm);
 %         hold(ax,'on');

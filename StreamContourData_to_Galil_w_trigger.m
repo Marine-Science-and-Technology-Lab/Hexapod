@@ -1,4 +1,4 @@
-function [] = StreamContourData_to_Galil(g,hex_path)
+function [] = StreamContourData_to_Galil_w_trigger(g,hex_path)
 
 yy=hex_path.axis_cts';
 ydiff=diff(round(yy)); %Relative move commands sent to contour buffer
@@ -13,26 +13,19 @@ TargetBuff=250;
 N=length(ydiff);
 cmdArrays = ceil(N/TargetBuff)
 
+g.GCommand('CMABCEFG')
+
+g.GCommand(['DT ' num2str(DT_g)])
 
 posStr = "CD "+string(ydiff(:,1))+","+string(ydiff(:,2))+","+...
     string(ydiff(:,3))+","+","+string(ydiff(:,4))+","+string(ydiff(:,5))+...
     ","+string(ydiff(:,6))+";";
-
-CMD2=sprintf('#Pulse; \n #A; \n SB 8; \n WT20,1; \n CB 8; \n WT20,1; \n JP #A; \n CB 8; \n EN');
-
-g.GProgramDownload(CMD2);
-g.GCommand('XQ #Pulse,2');
-g.GCommand('CMABCEFG')
-
-g.GCommand(['DT ' num2str(DT_g)])
 
 n=1;
 i=1;
 j=0;
 
 % hwait=waitbar(0,'Streaming Coordinates To Galil')
-
-
 while n<cmdArrays+1
     buffsize=g.GCommand('CM?');
 % waitbar(n/(cmdArrays+1))
@@ -70,9 +63,7 @@ while buffsizen~=511
 % end
 end
 g.GCommand('CD 0,0,0,,0,0,0=0') % end of counter buffer
-g.GCommand('CB8')
 g.GCommand('ST')
-
 %  g.GMotionComplete('ABCEFG')
 % g.GCommand('PA 0,0,0,,0,0,0')
 % g.GCommand('BGABCEFG')

@@ -4,7 +4,7 @@ function [hex_path]=SimulateMotionProfile_kinematics(hex_obj,hex_setup,hex_path)
 Time=hex_path.T;
 dt=hex_path.dt;
 
-r0=hex_path.pose_t(1:3,:); E=(hex_path.pose_t(4:6,:));
+r0=hex_path.pose_t(1:3,:); E=(hex_path.pose_t(4:6,:)); % Timeseries of end effector pose, measured from home position;
 r=r0+repmat(hex_obj.Home,1,size(r0,2));
 r_rel=hex_obj.r_rel;
 
@@ -91,9 +91,9 @@ joint_AB.angle_theta(:,j) = angle_theta;
    joint_CD.angle_alpha(:,j) = angle_alpha;
    joint_CD.angle_psi(:,j) = angle_psi;
 
-    if sum(q >= L0) ~= 6 || sum(q <= L0+dL) ~= 6
-        check(j) = 1;
-    end
+%     if sum(q >= L0) ~= 6 || sum(q <= L0+dL) ~= 6
+%         check(j) = 1;
+%     end
     linkl(:,j)=q(:);
 
     
@@ -111,10 +111,10 @@ hex_path.axis_t=linkl;
 hex_path.axis_dt=linkv;
 hex_path.axis_ddt=linkacc;
 
-[hex_path.axis_cts null]=LengthToEncoder(hex_setup,linkl)
+[hex_path.axis_cts null]=LengthToEncoder(hex_setup,linkl);
 
-hex_path.joint_separation.AB=hex_setup.Joint_Interp.SCAT_AB(hex_path.joint_AB.angle_theta,hex_path.joint_AB.angle_phi);
-hex_path.joint_separation.CD=hex_setup.Joint_Interp.SCAT_CD(hex_path.joint_CD.angle_alpha,hex_path.joint_CD.angle_psi);
+hex_path.joint_separation.AB=hex_setup.Joint_Interp.SCAT_AB(rad2deg(hex_path.joint_AB.angle_theta),rad2deg(hex_path.joint_AB.angle_phi));
+hex_path.joint_separation.CD=hex_setup.Joint_Interp.SCAT_CD(rad2deg(hex_path.joint_CD.angle_alpha),rad2deg(hex_path.joint_CD.angle_psi));
 
 hex_path.collisioncheck=max([hex_path.joint_separation.AB' hex_path.joint_separation.CD']<=hex_setup.collisionthreshold);
 

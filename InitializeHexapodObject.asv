@@ -20,7 +20,7 @@ hex_obj.pose_platform=[0; 0; 0; 0; 0; 0]; % Pose of platform
 hex_obj.Base_Zlink=0.0471297; % Height to axis of U joint yoke on platform
 hex_obj.Platform_Zlink=0.0407797%0.04564246; % Height to axis of U joint yoke on base
 b_W = zeros(3,1); % origin of base-fixed frame and world frame
-the_b_r1 = 0+the_dr/2+the_roff; % angular position of the first link; [rad]
+the_b_r1 = 0+the_dr/2+; % angular position of the first link; [rad]
 
 hex_obj.base = zeros(3,6);
 hex_obj.base(:,1) = [base_r*cos(the_b_r1); base_r*sin(the_b_r1); 0];
@@ -33,7 +33,7 @@ end
 
 % Link joints on platform in platform-fixed frame
 
-the_p_r1 = (pi/3)+the_dr/2+the_roff; % angular position of the first link; [rad]
+the_p_r1 = (pi/3)+the_dr/2; % angular position of the first link; [rad]
 
 hex_obj.plat0 = zeros(3,6);
 hex_obj.plat0(:,1) = [plat_r*cos(the_p_r1); plat_r*sin(the_p_r1); 0];

@@ -1,0 +1,40 @@
+% Connecting to device
+v = videoinput("gentl", 1, "Mono8");
+
+% Configure Device
+src = getselectedsource(v);
+src.ExposureMode = "Timed";
+src.TriggerMode = "On";
+
+% File Logging 
+filelocation = "C:\Users\juruiz\Desktop\TestBasler";
+filename = "recording5.avi";
+fullFilename = fullfile(filelocation, filename);
+
+% Create and configure the video writer
+logfile = VideoWriter(fullFilename, "Motion JPEG AVI");
+logfile.FrameRate = 25;
+
+% Configure the device to log to disk using the video writer
+v.LoggingMode = "disk";
+v.DiskLogger = logfile;
+
+framesPerTrigger = 1;
+numTriggers = Inf;
+triggerCondition = "DeviceSpecific";
+triggerSource = "DeviceSpecific";
+
+triggerconfig(v, "hardware", triggerCondition, triggerSource);
+v.FramesPerTrigger = framesPerTrigger;
+v.TriggerRepeat = numTriggers - 1;
+
+% Record with Hardware trigger
+framesPerTrigger = 1;
+numTriggers = Inf;
+triggerCondition = "DeviceSpecific";
+triggerSource = "DeviceSpecific";
+
+triggerconfig(v, "hardware", triggerCondition, triggerSource);
+v.FramesPerTrigger = framesPerTrigger;
+v.TriggerRepeat = numTriggers - 1;
+

@@ -31,7 +31,7 @@ r_rel=hex_obj.r_rel;
     dL = hex_obj.dL; % need link stroke length
 
     % U-joint kinematics
-    ujoint_angle = [-70 70 50 -170 170 -50];
+    ujoint_angle = [50 -170 170 -50 -70 70];
     % Convert angles to unit vector
     u_hat = [cosd(ujoint_angle(1)) cosd(ujoint_angle(2)) cosd(ujoint_angle(3)) cosd(ujoint_angle(4)) cosd(ujoint_angle(5)) cosd(ujoint_angle(6));
     sind(ujoint_angle(1)) sind(ujoint_angle(2)) sind(ujoint_angle(3)) sind(ujoint_angle(4)) sind(ujoint_angle(5)) sind(ujoint_angle(6));

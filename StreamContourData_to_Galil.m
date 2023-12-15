@@ -6,6 +6,7 @@ ydiff=diff(round(yy)); %Relative move commands sent to contour buffer
 DT_g=round(log2(hex_path.dt*1024));
 %CONTOUR 
 g.GInfo
+g.GCommand('CO 15')
  g.GCommand('ST')
 g.GCommand('SH ABCEFG') % servo motors ABCEFG
 
@@ -18,7 +19,7 @@ posStr = "CD "+string(ydiff(:,1))+","+string(ydiff(:,2))+","+...
     string(ydiff(:,3))+","+","+string(ydiff(:,4))+","+string(ydiff(:,5))+...
     ","+string(ydiff(:,6))+";";
 
-CMD2=sprintf('#Pulse; \n #A; \n SB 8; \n WT20,1; \n CB 8; \n WT20,1; \n JP #A; \n CB 8; \n EN');
+CMD2=sprintf('#Pulse; \n #A; \n SB 25; \n WT64,1; \n CB 25; \n WT64,1; \n JP #A; \n CB 25; \n EN');
 
 g.GProgramDownload(CMD2);
 g.GCommand('XQ #Pulse,2');
@@ -70,7 +71,7 @@ while buffsizen~=511
 % end
 end
 g.GCommand('CD 0,0,0,,0,0,0=0') % end of counter buffer
-g.GCommand('CB8')
+g.GCommand('CB25')
 g.GCommand('ST')
 
 %  g.GMotionComplete('ABCEFG')

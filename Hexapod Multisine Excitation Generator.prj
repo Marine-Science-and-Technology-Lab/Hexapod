@@ -1,0 +1,103 @@
+<deployment-project plugin="plugin.apptool" plugin-version="1.0">
+  <configuration build-checksum="4214104502" file="C:\Users\swafford\Documents\GitHub\Hexapod\Hexapod Multisine Excitation Generator.prj" location="C:\Users\swafford\Documents\GitHub\Hexapod" name="Hexapod Multisine Excitation Generator" target="target.mlapps" target-name="Package App">
+    <param.appname>Hexapod Multisine Excitation Generator</param.appname>
+    <param.authnamewatermark>Mike Swafford</param.authnamewatermark>
+    <param.email>michael-swafford@uiowa.edu</param.email>
+    <param.company>Marine Science and Technology Laboratory</param.company>
+    <param.icon>${PROJECT_ROOT}\Hexapod Multisine Excitation Generator_resources\icon_24.png</param.icon>
+    <param.icons>
+      <file>${PROJECT_ROOT}\Hexapod Multisine Excitation Generator_resources\icon_48.png</file>
+      <file>${PROJECT_ROOT}\Hexapod Multisine Excitation Generator_resources\icon_24.png</file>
+      <file>${PROJECT_ROOT}\Hexapod Multisine Excitation Generator_resources\icon_16.png</file>
+    </param.icons>
+    <param.summary>A versatile app for generating multsine singals for hexapod testing, featuring customizable parameters and data visualization.</param.summary>
+    <param.description>The Hexapod Multisine Excitation Generator is an app built using app designer in MATLAB. It is a tool for creating multisine signals tailored for hexapod testing to determine the hydrodynamic coefficients of partially- and fully-submerged bodies. It allows users to select degrees of freedom, set frequency bands, and adjust parameters relevant to designing multisine signals for frequency domain approaches to system identification. The app visualizes the generated signal and its FFT for the user to quickly check attributes of the designed excitation. Users can export the data to a .Mat file, ensuring seamless integration with the other hexapod tools. The intuitive interface combined with advanced customization options, makes it an essential tool for researchers and engineers in dynamic testing and analysis.</param.description>
+    <param.screenshot>C:\Users\swafford\Pictures\DALL·E 2024-01-31 09.52.52 - Design an app icon that visually conveys the concept of generating sinewave signals for a Stewart platform, without using any text. The icon should ab.png</param.screenshot>
+    <param.version>0.3</param.version>
+    <param.products.name>
+      <item>MATLAB</item>
+    </param.products.name>
+    <param.products.id>
+      <item>1</item>
+    </param.products.id>
+    <param.products.version>
+      <item>23.2</item>
+    </param.products.version>
+    <param.platforms />
+    <param.output>${PROJECT_ROOT}\generate_multisine_app</param.output>
+    <param.guid>0adb706f-7514-48f6-a050-44d643b02cf1</param.guid>
+    <unset>
+      <param.platforms />
+    </unset>
+    <fileset.main>
+      <file>${PROJECT_ROOT}\Hexapod_Generate_MultiSine_Excitation.mlapp</file>
+    </fileset.main>
+    <fileset.depfun>
+      <file>C:\Users\swafford\Documents\MATLAB\Calc_MIMO_Multisine.m</file>
+      <file>C:\Users\swafford\Documents\MATLAB\CalcMultisine.m</file>
+      <file>C:\Users\swafford\Documents\MATLAB\rms.m</file>
+    </fileset.depfun>
+    <fileset.resources />
+    <fileset.package />
+    <build-deliverables>
+      <file location="${PROJECT_ROOT}" name="generate_multisine_app" optional="false">C:\Users\swafford\Documents\GitHub\Hexapod\generate_multisine_app</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>C:\Program Files\MATLAB\R2023b</root>
+      <toolboxes>
+        <toolbox name="matlabcoder" />
+        <toolbox name="embeddedcoder" />
+        <toolbox name="gpucoder" />
+        <toolbox name="fixedpoint" />
+        <toolbox name="matlabhdlcoder" />
+        <toolbox name="neuralnetwork" />
+      </toolboxes>
+      <toolbox>
+        <matlabcoder>
+          <enabled>true</enabled>
+        </matlabcoder>
+      </toolbox>
+      <toolbox>
+        <embeddedcoder>
+          <enabled>true</enabled>
+        </embeddedcoder>
+      </toolbox>
+      <toolbox>
+        <gpucoder>
+          <enabled>true</enabled>
+        </gpucoder>
+      </toolbox>
+      <toolbox>
+        <fixedpoint>
+          <enabled>true</enabled>
+        </fixedpoint>
+      </toolbox>
+      <toolbox>
+        <matlabhdlcoder>
+          <enabled>true</enabled>
+        </matlabhdlcoder>
+      </toolbox>
+      <toolbox>
+        <neuralnetwork>
+          <enabled>true</enabled>
+        </neuralnetwork>
+      </toolbox>
+    </matlab>
+    <platform>
+      <unix>false</unix>
+      <mac>false</mac>
+      <windows>true</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>10.0</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>win64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>

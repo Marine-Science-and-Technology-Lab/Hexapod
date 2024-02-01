@@ -1,0 +1,146 @@
+<deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
+  <configuration file="C:\Users\swafford\Documents\GitHub\Hexapod\Hexapod_Generate_MultiSine_Excitation_1.prj" location="C:\Users\swafford\Documents\GitHub\Hexapod" name="Hexapod_Generate_MultiSine_Excitation_1" preferred-package-location="C:\Users\swafford\Documents\GitHub\Hexapod\Hexapod_Generate_MultiSine_Excitation_1\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+    <param.appname>Hexapod_Generate_MultiSine_Excitation</param.appname>
+    <param.icon>${PROJECT_ROOT}\Hexapod_Generate_MultiSine_Excitation_1_resources\icon.ico</param.icon>
+    <param.icons>
+      <file>${PROJECT_ROOT}\Hexapod_Generate_MultiSine_Excitation_1_resources\icon_48.png</file>
+      <file>${PROJECT_ROOT}\Hexapod_Generate_MultiSine_Excitation_1_resources\icon_32.png</file>
+      <file>${PROJECT_ROOT}\Hexapod_Generate_MultiSine_Excitation_1_resources\icon_24.png</file>
+      <file>${PROJECT_ROOT}\Hexapod_Generate_MultiSine_Excitation_1_resources\icon_16.png</file>
+    </param.icons>
+    <param.version>0.3</param.version>
+    <param.authnamewatermark>Mike Swafford</param.authnamewatermark>
+    <param.email>michael-swafford@uiowa.edu</param.email>
+    <param.company>Marine Science and Technology Laboratory</param.company>
+    <param.summary>A versatile app for generating multsine singals for hexapod testing, featuring customizable parameters and data visualization.</param.summary>
+    <param.description>The Hexapod Multisine Excitation Generator is an app built using app designer in MATLAB. It is a tool for creating multisine signals tailored for hexapod testing to determine the hydrodynamic coefficients of partially- and fully-submerged bodies. It allows users to select degrees of freedom, set frequency bands, and adjust parameters relevant to designing multisine signals for frequency domain approaches to system identification. The app visualizes the generated signal and its FFT for the user to quickly check attributes of the designed excitation. Users can export the data to a .Mat file, ensuring seamless integration with the other hexapod tools. The intuitive interface combined with advanced customization options, makes it an essential tool for researchers and engineers in dynamic testing and analysis.</param.description>
+    <param.screenshot>C:\Users\swafford\Downloads\DALL·E 2024-01-31 09.52.52 - Design an app icon that visually conveys the concept of generating sinewave signals for a Stewart platform, without using any text. The icon should ab.png</param.screenshot>
+    <param.guid />
+    <param.installpath.string>\Marine Science and Technology Laboratory\Hexapod_Generate_MultiSine_Excitation\</param.installpath.string>
+    <param.installpath.combo>option.installpath.programfiles</param.installpath.combo>
+    <param.logo>C:\Users\swafford\Downloads\DALL·E 2024-01-31 09.52.52 - Design an app icon that visually conveys the concept of generating sinewave signals for a Stewart platform, without using any text. The icon should ab.png</param.logo>
+    <param.install.notes />
+    <param.target.install.notes />
+    <param.intermediate>${PROJECT_ROOT}\generate_multisine_app\for_testing</param.intermediate>
+    <param.files.only>${PROJECT_ROOT}\generate_multisine_app\for_redistribution_files_only</param.files.only>
+    <param.output>${PROJECT_ROOT}\generate_multisine_app\for_redistribution</param.output>
+    <param.logdir>${PROJECT_ROOT}\generate_multisine_app</param.logdir>
+    <param.enable.clean.build>false</param.enable.clean.build>
+    <param.user.defined.mcr.options />
+    <param.target.type>subtarget.standalone</param.target.type>
+    <param.support.packages />
+    <param.web.mcr>true</param.web.mcr>
+    <param.package.mcr>false</param.package.mcr>
+    <param.no.mcr>false</param.no.mcr>
+    <param.web.mcr.name>MyAppInstaller_web</param.web.mcr.name>
+    <param.package.mcr.name>MyAppInstaller_mcr</param.package.mcr.name>
+    <param.no.mcr.name>MyAppInstaller_app</param.no.mcr.name>
+    <param.windows.command.prompt>true</param.windows.command.prompt>
+    <param.create.log>false</param.create.log>
+    <param.log.file />
+    <param.native.matlab>false</param.native.matlab>
+    <param.checkbox>false</param.checkbox>
+    <param.example />
+    <param.help.text>Syntax 
+	  -? 
+	 
+ Input Arguments 
+	 -?  print help on how to use the application 
+	 input arguments</param.help.text>
+    <unset>
+      <param.guid />
+      <param.installpath.string />
+      <param.installpath.combo />
+      <param.install.notes />
+      <param.target.install.notes />
+      <param.enable.clean.build />
+      <param.user.defined.mcr.options />
+      <param.target.type />
+      <param.support.packages />
+      <param.web.mcr />
+      <param.package.mcr />
+      <param.no.mcr />
+      <param.web.mcr.name />
+      <param.package.mcr.name />
+      <param.no.mcr.name />
+      <param.windows.command.prompt />
+      <param.create.log />
+      <param.log.file />
+      <param.native.matlab />
+      <param.checkbox />
+      <param.example />
+    </unset>
+    <fileset.main>
+      <file>${PROJECT_ROOT}\Hexapod_Generate_MultiSine_Excitation.mlapp</file>
+    </fileset.main>
+    <fileset.resources />
+    <fileset.package />
+    <fileset.depfun>
+      <file>C:\Users\swafford\Documents\MATLAB\Calc_MIMO_Multisine.m</file>
+      <file>C:\Users\swafford\Documents\MATLAB\CalcMultisine.m</file>
+      <file>C:\Users\swafford\Documents\MATLAB\rms.m</file>
+    </fileset.depfun>
+    <build-deliverables>
+      <file location="${PROJECT_ROOT}\generate_multisine_app\for_testing" name="readme.txt" optional="true">C:\Users\swafford\Documents\GitHub\Hexapod\generate_multisine_app\for_testing\readme.txt</file>
+      <file location="${PROJECT_ROOT}\generate_multisine_app\for_testing" name="splash.png" optional="false">C:\Users\swafford\Documents\GitHub\Hexapod\generate_multisine_app\for_testing\splash.png</file>
+      <file location="${PROJECT_ROOT}\generate_multisine_app\for_testing" name="Hexapod_Generate_MultiSine_Excitation.exe" optional="false">C:\Users\swafford\Documents\GitHub\Hexapod\generate_multisine_app\for_testing\Hexapod_Generate_MultiSine_Excitation.exe</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>C:\Program Files\MATLAB\R2023b</root>
+      <toolboxes>
+        <toolbox name="matlabcoder" />
+        <toolbox name="embeddedcoder" />
+        <toolbox name="gpucoder" />
+        <toolbox name="fixedpoint" />
+        <toolbox name="matlabhdlcoder" />
+        <toolbox name="neuralnetwork" />
+      </toolboxes>
+      <toolbox>
+        <matlabcoder>
+          <enabled>true</enabled>
+        </matlabcoder>
+      </toolbox>
+      <toolbox>
+        <embeddedcoder>
+          <enabled>true</enabled>
+        </embeddedcoder>
+      </toolbox>
+      <toolbox>
+        <gpucoder>
+          <enabled>true</enabled>
+        </gpucoder>
+      </toolbox>
+      <toolbox>
+        <fixedpoint>
+          <enabled>true</enabled>
+        </fixedpoint>
+      </toolbox>
+      <toolbox>
+        <matlabhdlcoder>
+          <enabled>true</enabled>
+        </matlabhdlcoder>
+      </toolbox>
+      <toolbox>
+        <neuralnetwork>
+          <enabled>true</enabled>
+        </neuralnetwork>
+      </toolbox>
+    </matlab>
+    <platform>
+      <unix>false</unix>
+      <mac>false</mac>
+      <windows>true</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>10.0</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>win64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>

@@ -5,10 +5,13 @@ function [hex_path]=SimulateMotionProfile_kinematics(hex_obj,hex_setup,hex_path)
 Time=hex_path.T;
 dt=hex_path.dt;
 
-
+% By default, the motion is assumed to be relative to the current pose. If
+% absolute motion is specified (e.g. in the point-to-point dialog), the
+% current pose is subtracted from each entry in the pose_t array when the
+% hex_path structure is generated.
 CurrentPose=hex_obj.pose;  
-hex_path.pose_t_relative=hex_path.pose_t;
-hex_path.pose_t=hex_path.pose_t_relative+repmat(CurrentPose,1,length(Time));
+hex_path.pose_t_relative=hex_path.pose_t; % Create the relative pose array (this is the array generated from the motion-planning functions)
+hex_path.pose_t=hex_path.pose_t_relative+repmat(CurrentPose,1,length(Time)); %Generate a new absolute pose array from the relative by adding the starting pose vector to each timestep.
 
 r0=hex_path.pose_t(1:3,:); E=(hex_path.pose_t(4:6,:)); % Timeseries of end effector pose, measured from home position;
 r=r0+repmat(hex_obj.Home,1,size(r0,2));
@@ -31,7 +34,7 @@ r_rel=hex_obj.r_rel;
     dL = hex_obj.dL; % need link stroke length
 
     % U-joint kinematics
-    ujoint_angle = [50 -170 170 -50 -70 70];
+    ujoint_angle = hex_setup.YokeA.Uhat;
     % Convert angles to unit vector
     u_hat = [cosd(ujoint_angle(1)) cosd(ujoint_angle(2)) cosd(ujoint_angle(3)) cosd(ujoint_angle(4)) cosd(ujoint_angle(5)) cosd(ujoint_angle(6));
     sind(ujoint_angle(1)) sind(ujoint_angle(2)) sind(ujoint_angle(3)) sind(ujoint_angle(4)) sind(ujoint_angle(5)) sind(ujoint_angle(6));

@@ -113,7 +113,7 @@ hex_setup.F_ex.Mx=0;
 hex_setup.F_ex.My=0;
 hex_setup.F_ex.Mz=0;
 
-hex_obj.Z_water=-(46-4)*0.0254; % Location of water surface in platform frame
+hex_obj.Z_water=-(46-4+6)*0.0254; % Location of water surface in platform frame
 
 
 hex_setup.collisionthreshold=0.5; % minimum allowable separation distance between Ujoint yokes

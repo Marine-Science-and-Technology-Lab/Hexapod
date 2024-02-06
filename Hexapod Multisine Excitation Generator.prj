@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="4214104502" file="C:\Users\swafford\Documents\GitHub\Hexapod\Hexapod Multisine Excitation Generator.prj" location="C:\Users\swafford\Documents\GitHub\Hexapod" name="Hexapod Multisine Excitation Generator" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="184523510" file="C:\Users\swafford\Documents\GitHub\Hexapod\Hexapod Multisine Excitation Generator.prj" location="C:\Users\swafford\Documents\GitHub\Hexapod" name="Hexapod Multisine Excitation Generator" target="target.mlapps" target-name="Package App">
     <param.appname>Hexapod Multisine Excitation Generator</param.appname>
     <param.authnamewatermark>Mike Swafford</param.authnamewatermark>
     <param.email>michael-swafford@uiowa.edu</param.email>

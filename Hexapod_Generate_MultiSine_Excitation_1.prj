@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration file="C:\Users\swafford\Documents\GitHub\Hexapod\Hexapod_Generate_MultiSine_Excitation_1.prj" location="C:\Users\swafford\Documents\GitHub\Hexapod" name="Hexapod_Generate_MultiSine_Excitation_1" preferred-package-location="C:\Users\swafford\Documents\GitHub\Hexapod\Hexapod_Generate_MultiSine_Excitation_1\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="2096294729" file="C:\Users\swafford\Documents\GitHub\Hexapod\Hexapod_Generate_MultiSine_Excitation_1.prj" location="C:\Users\swafford\Documents\GitHub\Hexapod" name="Hexapod_Generate_MultiSine_Excitation_1" preferred-package-location="C:\Users\swafford\Documents\GitHub\Hexapod\generate_multisine_app\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>Hexapod_Generate_MultiSine_Excitation</param.appname>
     <param.icon>${PROJECT_ROOT}\Hexapod_Generate_MultiSine_Excitation_1_resources\icon.ico</param.icon>
     <param.icons>
@@ -8,7 +8,7 @@
       <file>${PROJECT_ROOT}\Hexapod_Generate_MultiSine_Excitation_1_resources\icon_24.png</file>
       <file>${PROJECT_ROOT}\Hexapod_Generate_MultiSine_Excitation_1_resources\icon_16.png</file>
     </param.icons>
-    <param.version>0.4.3</param.version>
+    <param.version>0.4.4</param.version>
     <param.authnamewatermark>Mike Swafford</param.authnamewatermark>
     <param.email>michael-swafford@uiowa.edu</param.email>
     <param.company>Marine Science and Technology Laboratory</param.company>
@@ -35,7 +35,7 @@
     <param.web.mcr.name>MyAppInstaller_web</param.web.mcr.name>
     <param.package.mcr.name>MyAppInstaller_mcr</param.package.mcr.name>
     <param.no.mcr.name>MyAppInstaller_app</param.no.mcr.name>
-    <param.windows.command.prompt>false</param.windows.command.prompt>
+    <param.windows.command.prompt>true</param.windows.command.prompt>
     <param.create.log>false</param.create.log>
     <param.log.file />
     <param.native.matlab>false</param.native.matlab>
@@ -63,6 +63,7 @@
       <param.web.mcr.name />
       <param.package.mcr.name />
       <param.no.mcr.name />
+      <param.windows.command.prompt />
       <param.create.log />
       <param.log.file />
       <param.native.matlab />

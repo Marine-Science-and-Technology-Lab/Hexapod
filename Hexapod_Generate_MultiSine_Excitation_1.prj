@@ -8,12 +8,13 @@
       <file>${PROJECT_ROOT}\Hexapod_Generate_MultiSine_Excitation_1_resources\icon_24.png</file>
       <file>${PROJECT_ROOT}\Hexapod_Generate_MultiSine_Excitation_1_resources\icon_16.png</file>
     </param.icons>
-    <param.version>0.5</param.version>
+    <param.version>0.6</param.version>
     <param.authnamewatermark>Mike Swafford</param.authnamewatermark>
     <param.email>michael-swafford@uiowa.edu</param.email>
     <param.company>Marine Science and Technology Laboratory</param.company>
     <param.summary>A versatile app for generating multsine singals for hexapod testing, featuring customizable parameters and data visualization.</param.summary>
-    <param.description>The Hexapod Multisine Excitation Generator is an app built using app designer in MATLAB. It is a tool for creating multisine signals tailored for hexapod testing to determine the hydrodynamic coefficients of partially- and fully-submerged bodies. It allows users to select degrees of freedom, set frequency bands, and adjust parameters relevant to designing multisine signals for frequency domain approaches to system identification. The app visualizes the generated signal and its FFT for the user to quickly check attributes of the designed excitation. Users can export the data to a .Mat file, ensuring seamless integration with the other hexapod tools. The intuitive interface combined with advanced customization options, makes it an essential tool for researchers and engineers in dynamic testing and analysis.</param.description>
+    <param.description>NEW for V0.6 - Multisine Generated in Acceleration and converted to Displacement. Flattens the power spectrum for the FRM measurement.
+The Hexapod Multisine Excitation Generator is an app built using app designer in MATLAB. It is a tool for creating multisine signals tailored for hexapod testing to determine the hydrodynamic coefficients of partially- and fully-submerged bodies. It allows users to select degrees of freedom, set frequency bands, and adjust parameters relevant to designing multisine signals for frequency domain approaches to system identification. The app visualizes the generated signal and its FFT for the user to quickly check attributes of the designed excitation. Users can export the data to a .Mat file, ensuring seamless integration with the other hexapod tools. The intuitive interface combined with advanced customization options, makes it an essential tool for researchers and engineers in dynamic testing and analysis.</param.description>
     <param.screenshot>C:\Users\swafford\Downloads\DALL·E 2024-01-31 09.52.52 - Design an app icon that visually conveys the concept of generating sinewave signals for a Stewart platform, without using any text. The icon should ab.png</param.screenshot>
     <param.guid />
     <param.installpath.string>\Marine Science and Technology Laboratory\Hexapod_Generate_MultiSine_Excitation\</param.installpath.string>
@@ -76,9 +77,9 @@
     <fileset.resources />
     <fileset.package />
     <fileset.depfun>
+      <file>C:\Users\swafford\Documents\MATLAB\Calc_MIMO_Multisine.m</file>
       <file>C:\Users\swafford\Documents\MATLAB\CalcMultisine.m</file>
       <file>C:\Users\swafford\Documents\MATLAB\rms.m</file>
-      <file>C:\Users\swafford\OneDrive - University of Iowa\System Identification\Calc_MIMO_Multisine.m</file>
     </fileset.depfun>
     <build-deliverables>
       <file location="${PROJECT_ROOT}\generate_multisine_app\for_testing" name="readme.txt" optional="true">C:\Users\swafford\Documents\GitHub\Hexapod\generate_multisine_app\for_testing\readme.txt</file>

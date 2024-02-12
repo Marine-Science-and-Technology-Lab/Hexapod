@@ -8,7 +8,7 @@
       <file>${PROJECT_ROOT}\Hexapod_Generate_MultiSine_Excitation_1_resources\icon_24.png</file>
       <file>${PROJECT_ROOT}\Hexapod_Generate_MultiSine_Excitation_1_resources\icon_16.png</file>
     </param.icons>
-    <param.version>0.6</param.version>
+    <param.version>0.6.1</param.version>
     <param.authnamewatermark>Mike Swafford</param.authnamewatermark>
     <param.email>michael-swafford@uiowa.edu</param.email>
     <param.company>Marine Science and Technology Laboratory</param.company>

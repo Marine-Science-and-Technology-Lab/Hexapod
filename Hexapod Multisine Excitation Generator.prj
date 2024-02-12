@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="1338214685" file="C:\Users\swafford\Documents\GitHub\Hexapod\Hexapod Multisine Excitation Generator.prj" location="C:\Users\swafford\Documents\GitHub\Hexapod" name="Hexapod Multisine Excitation Generator" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="2076926209" file="C:\Users\swafford\Documents\GitHub\Hexapod\Hexapod Multisine Excitation Generator.prj" location="C:\Users\swafford\Documents\GitHub\Hexapod" name="Hexapod Multisine Excitation Generator" target="target.mlapps" target-name="Package App">
     <param.appname>Hexapod Multisine Excitation Generator</param.appname>
     <param.authnamewatermark>Mike Swafford</param.authnamewatermark>
     <param.email>michael-swafford@uiowa.edu</param.email>
@@ -13,8 +13,8 @@
     <param.summary>A versatile app for generating multsine singals for hexapod testing, featuring customizable parameters and data visualization.</param.summary>
     <param.description>NEW for V0.6 - Multisine Generated in Acceleration and converted to Displacement. Flattens the power spectrum for the FRM measurement.
 The Hexapod Multisine Excitation Generator is an app built using app designer in MATLAB. It is a tool for creating multisine signals tailored for hexapod testing to determine the hydrodynamic coefficients of partially- and fully-submerged bodies. It allows users to select degrees of freedom, set frequency bands, and adjust parameters relevant to designing multisine signals for frequency domain approaches to system identification. The app visualizes the generated signal and its FFT for the user to quickly check attributes of the designed excitation. Users can export the data to a .Mat file, ensuring seamless integration with the other hexapod tools. The intuitive interface combined with advanced customization options, makes it an essential tool for researchers and engineers in dynamic testing and analysis.</param.description>
-    <param.screenshot>C:\Users\swafford\AppData\Local\Temp\tpf1561e00_6f22_433d_a92e_0001a38f6948.png</param.screenshot>
-    <param.version>0.6.1</param.version>
+    <param.screenshot>C:\Users\swafford\AppData\Local\Temp\tpd9cdd8af_8276_43b0_b2c7_7fc7ffe17dc6.png</param.screenshot>
+    <param.version>0.6.2</param.version>
     <param.products.name>
       <item>MATLAB</item>
     </param.products.name>

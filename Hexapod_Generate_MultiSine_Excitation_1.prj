@@ -8,12 +8,13 @@
       <file>${PROJECT_ROOT}\Hexapod_Generate_MultiSine_Excitation_1_resources\icon_24.png</file>
       <file>${PROJECT_ROOT}\Hexapod_Generate_MultiSine_Excitation_1_resources\icon_16.png</file>
     </param.icons>
-    <param.version>0.6.3</param.version>
+    <param.version>0.7</param.version>
     <param.authnamewatermark>Mike Swafford</param.authnamewatermark>
     <param.email>michael-swafford@uiowa.edu</param.email>
     <param.company>Marine Science and Technology Laboratory</param.company>
     <param.summary>A versatile app for generating multsine singals for hexapod testing, featuring customizable parameters and data visualization.</param.summary>
-    <param.description>NEW for V0.6 - Multisine Generated in Acceleration and converted to Displacement. Flattens the power spectrum for the FRM measurement.
+    <param.description>NEW for V0.7 - Multisine is generated with optimum phase angles to produce minimum crest factor for both displacement and acceleration using the l2p norm method. The crest factor for each signal is available in U_data.info.Cr table for each experiment.
+
 The Hexapod Multisine Excitation Generator is an app built using app designer in MATLAB. It is a tool for creating multisine signals tailored for hexapod testing to determine the hydrodynamic coefficients of partially- and fully-submerged bodies. It allows users to select degrees of freedom, set frequency bands, and adjust parameters relevant to designing multisine signals for frequency domain approaches to system identification. The app visualizes the generated signal and its FFT for the user to quickly check attributes of the designed excitation. Users can export the data to a .Mat file, ensuring seamless integration with the other hexapod tools. The intuitive interface combined with advanced customization options, makes it an essential tool for researchers and engineers in dynamic testing and analysis.</param.description>
     <param.screenshot>C:\Users\swafford\Downloads\DALL·E 2024-01-31 09.52.52 - Design an app icon that visually conveys the concept of generating sinewave signals for a Stewart platform, without using any text. The icon should ab.png</param.screenshot>
     <param.guid />
@@ -47,7 +48,11 @@ The Hexapod Multisine Excitation Generator is an app built using app designer in
 	 
  Input Arguments 
 	 -?  print help on how to use the application 
-	 input arguments</param.help.text>
+	 input arguments 
+ Description 
+ 	 NEW for V0.7 - Multisine is generated with optimum phase angles to produce minimum crest factor for both displacement and acceleration using the l2p norm method. The crest factor for each signal is available in U_data.info.Cr table for each experiment.
+
+The Hexapod Multisine Excitation Generator is an app built using app designer in MATLAB. It is a tool for creating multisine signals tailored for hexapod testing to determine the hydrodynamic coefficients of partially- and fully-submerged bodies. It allows users to select degrees of freedom, set frequency bands, and adjust parameters relevant to designing multisine signals for frequency domain approaches to system identification. The app visualizes the generated signal and its FFT for the user to quickly check attributes of the designed excitation. Users can export the data to a .Mat file, ensuring seamless integration with the other hexapod tools. The intuitive interface combined with advanced customization options, makes it an essential tool for researchers and engineers in dynamic testing and analysis.</param.help.text>
     <unset>
       <param.guid />
       <param.installpath.string />
@@ -77,8 +82,14 @@ The Hexapod Multisine Excitation Generator is an app built using app designer in
     <fileset.resources />
     <fileset.package />
     <fileset.depfun>
-      <file>C:\Users\swafford\Documents\MATLAB\Calc_MIMO_Multisine.m</file>
-      <file>C:\Users\swafford\Documents\MATLAB\CalcMultisine.m</file>
+      <file>C:\Users\swafford\Documents\MATLAB\Calc_MIMO_Multisine_L2p.m</file>
+      <file>C:\Users\swafford\Documents\MATLAB\calcL2pMIMO.m</file>
+      <file>C:\Users\swafford\Documents\MATLAB\calcL2pMultisine.m</file>
+      <file>C:\Users\swafford\Documents\MATLAB\CalcMultisinel2p.m</file>
+      <file>C:\Users\swafford\Documents\MATLAB\HarmMultisine.m</file>
+      <file>C:\Users\swafford\Documents\MATLAB\lin2log.m</file>
+      <file>C:\Users\swafford\Documents\MATLAB\lintone.m</file>
+      <file>C:\Users\swafford\Documents\MATLAB\logtone.m</file>
       <file>C:\Users\swafford\Documents\MATLAB\rms.m</file>
     </fileset.depfun>
     <build-deliverables>

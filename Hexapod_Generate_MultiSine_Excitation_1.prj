@@ -13,8 +13,7 @@
     <param.email>michael-swafford@uiowa.edu</param.email>
     <param.company>Marine Science and Technology Laboratory</param.company>
     <param.summary>A versatile app for generating multsine singals for hexapod testing, featuring customizable parameters and data visualization.</param.summary>
-    <param.description>NEW for V0.7 - Multisine is generated with optimum phase angles to produce minimum crest factor for both displacement and acceleration using the l2p norm method. The crest factor for each DOF for each experiment and realization is added to the data.info field.
-
+    <param.description>NEW for V0.7 - Multisine is generated with optimum phase angles to produce minimum crest factor for both displacement and acceleration using the l2p norm method. The crest factor for each signal is written to the table in data.info.Cr.M#.
 
 The Hexapod Multisine Excitation Generator is an app built using app designer in MATLAB. It is a tool for creating multisine signals tailored for hexapod testing to determine the hydrodynamic coefficients of partially- and fully-submerged bodies. It allows users to select degrees of freedom, set frequency bands, and adjust parameters relevant to designing multisine signals for frequency domain approaches to system identification. The app visualizes the generated signal and its FFT for the user to quickly check attributes of the designed excitation. Users can export the data to a .Mat file, ensuring seamless integration with the other hexapod tools. The intuitive interface combined with advanced customization options, makes it an essential tool for researchers and engineers in dynamic testing and analysis.</param.description>
     <param.screenshot>C:\Users\swafford\Downloads\DALL·E 2024-01-31 09.52.52 - Design an app icon that visually conveys the concept of generating sinewave signals for a Stewart platform, without using any text. The icon should ab.png</param.screenshot>
@@ -49,12 +48,7 @@ The Hexapod Multisine Excitation Generator is an app built using app designer in
 	 
  Input Arguments 
 	 -?  print help on how to use the application 
-	 input arguments 
- Description 
- 	 NEW for V0.7 - Multisine is generated with optimum phase angles to produce minimum crest factor for both displacement and acceleration using the l2p norm method. The crest factor for each DOF for each experiment and realization is added to the data.info field.
-
-
-The Hexapod Multisine Excitation Generator is an app built using app designer in MATLAB. It is a tool for creating multisine signals tailored for hexapod testing to determine the hydrodynamic coefficients of partially- and fully-submerged bodies. It allows users to select degrees of freedom, set frequency bands, and adjust parameters relevant to designing multisine signals for frequency domain approaches to system identification. The app visualizes the generated signal and its FFT for the user to quickly check attributes of the designed excitation. Users can export the data to a .Mat file, ensuring seamless integration with the other hexapod tools. The intuitive interface combined with advanced customization options, makes it an essential tool for researchers and engineers in dynamic testing and analysis.</param.help.text>
+	 input arguments</param.help.text>
     <unset>
       <param.guid />
       <param.installpath.string />

@@ -1,4 +1,4 @@
-function [] = StreamContourData_to_Galil(g,hex_path)
+function [exitcond] = StreamContourData_to_Galil(g,hex_path,trigger_flag,record_flag)
 
 yy=hex_path.axis_cts';
 ydiff=diff(round(yy)); %Relative move commands sent to contour buffer
@@ -6,26 +6,30 @@ ydiff=diff(round(yy)); %Relative move commands sent to contour buffer
 DT_g=round(log2(hex_path.dt*1024));
 %CONTOUR 
 g.GInfo
-g.GCommand('CO 15')
- g.GCommand('ST')
+g.GCommand('CO 15') % Configure all GPIO as output
+ g.GCommand('ST') % Stop any current execution
 g.GCommand('SH ABCEFG') % servo motors ABCEFG
 
-TargetBuff=250;
-N=length(ydiff);
-cmdArrays = ceil(N/TargetBuff)
+TargetBuff=250; %Target number of empty samples to maintain in buffer (buffer is 512 samples long).
+N=length(ydiff); 
+cmdArrays = ceil(N/TargetBuff);
 
 
 posStr = "CD "+string(ydiff(:,1))+","+string(ydiff(:,2))+","+...
     string(ydiff(:,3))+","+","+string(ydiff(:,4))+","+string(ydiff(:,5))+...
     ","+string(ydiff(:,6))+";";
 
-CMD2=sprintf('#Pulse; \n #A; \n SB 25; \n SB 17; \n WT64,1; \n CB 25; \n CB 17; \n WT64,1; \n JP #A; \n CB 25; \n CB 17; \n EN');
 
+% If the pulsed trigger output is desired, this will upload and execute the
+% program to generate a square wave.
+if trigger_flag
+CMD2=sprintf('#Pulse; \n SB 33; \n #A; \n SB 25; \n SB 17; \n WT16,1; \n CB 25; \n CB 17; \n WT16,1; \n JP #A; \n CB 25; \n CB 17; \n EN');
 g.GProgramDownload(CMD2);
 g.GCommand('XQ #Pulse,2');
-g.GCommand('CMABCEFG')
+end
 
-g.GCommand(['DT ' num2str(DT_g)])
+g.GCommand('CMABCEFG') %Enter contour mode
+g.GCommand(['DT ' num2str(DT_g)]) %Set the timestep size in number of samples
 
 n=1;
 i=1;
@@ -73,11 +77,12 @@ end
 g.GCommand('CD 0,0,0,,0,0,0=0') % end of counter buffer
 g.GCommand('CB25')
 g.GCommand('CB17')
+g.GCommand('CB33')
 g.GCommand('ST')
 
 %  g.GMotionComplete('ABCEFG')
 % g.GCommand('PA 0,0,0,,0,0,0')
 % g.GCommand('BGABCEFG')
-
+exitcond='DONE';
 end
 

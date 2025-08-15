@@ -10,6 +10,7 @@ g.GCommand('CO 15')
  g.GCommand('ST')
 g.GCommand('SH ABCEFG') % servo motors ABCEFG
 
+% Put it on the same thread
 TargetBuff=250;
 N=length(ydiff);
 cmdArrays = ceil(N/TargetBuff)
@@ -19,13 +20,30 @@ posStr = "CD "+string(ydiff(:,1))+","+string(ydiff(:,2))+","+...
     string(ydiff(:,3))+","+","+string(ydiff(:,4))+","+string(ydiff(:,5))+...
     ","+string(ydiff(:,6))+";";
 
-CMD2=sprintf('#Pulse; \n #A; \n SB 25; \n SB 17; \n WT64,1; \n CB 25; \n CB 17; \n WT64,1; \n JP #A; \n CB 25; \n CB 17; \n EN');
+CMD2 = sprintf([
+    '#Pulse; \n' ...
+    'SB 33 \n' ...   
+    '#WaitMove; \n' ...
+    'AM ABCEFG; \n' ... 
+    '#A; \n' ...
+    'SB 25; \n' ...
+    'SB 17; \n' ...
+    'WT16,1; \n' ...
+    'CB 25; \n' ...
+    'CB 17; \n' ...
+    'WT16,1; \n' ...
+    'JP #A; \n' ...
+    'CB 25; \n' ...
+    'CB 17; \n' ...
+    'EN'
+]);
+
 
 g.GProgramDownload(CMD2);
-g.GCommand('XQ #Pulse,2');
 g.GCommand('CMABCEFG')
 
 g.GCommand(['DT ' num2str(DT_g)])
+
 
 n=1;
 i=1;
@@ -34,6 +52,10 @@ j=0;
 % hwait=waitbar(0,'Streaming Coordinates To Galil')
 
 
+g.GCommand('XQ #Pulse,2');
+% DMC command After Motion
+% If statement to setup at the DMC code
+% Use Jump statement to use 
 while n<cmdArrays+1
     buffsize=g.GCommand('CM?');
 % waitbar(n/(cmdArrays+1))
@@ -73,6 +95,7 @@ end
 g.GCommand('CD 0,0,0,,0,0,0=0') % end of counter buffer
 g.GCommand('CB25')
 g.GCommand('CB17')
+g.GCommand('CB33')
 g.GCommand('ST')
 
 %  g.GMotionComplete('ABCEFG')

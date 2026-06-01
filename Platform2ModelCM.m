@@ -1,18 +1,16 @@
 function [hex_obj]=Platform2ModelCM(hex_obj,p_pose)
+% Given a platform pose p_pose = [plat_CM; E] in world frame, compute
+% the POI (end-effector) world pose and store it as hex_obj.pose. Under
+% the three-frame model this is just one side of EffectorFromPlatformPose;
+% kept as a separate function for the callers that pass in an arbitrary
+% p_pose rather than reading from hex_obj.pose_platform.
 
-r0 = p_pose(1:3); % assuming position is first three elements of pose (x,y,z)
-    r=r0
-    E = p_pose(4:6) % assuming Euler angles are next three elements of pose (phi,theta,psi)
-    
-    r_rel = hex_obj.r_rel; % need the relative position of the point of interest in platform frame
-    
-    % Inverse Kinematics
-    R = E2R(E); % convert Euler angles to rotation matrix
-    
-   model_CM=r+R*r_rel
-   
-   
-   hex_obj.pose=[model_CM; E];
-   
-   
+    r_plat = p_pose(1:3);
+    E      = p_pose(4:6);
+    R      = E2R(E);
+
+    % POI world position = plat_CM + R * POI translation (in platform body).
+    model_CM = r_plat + R * hex_obj.T_platform_POI.t;
+
+    hex_obj.pose = [model_CM; E];
 end

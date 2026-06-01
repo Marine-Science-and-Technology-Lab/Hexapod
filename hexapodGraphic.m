@@ -4,23 +4,20 @@ function fig_obj = hexapodGraphic(hex_obj,fig_obj)
         fig_obj = struct();
         fig_obj.ax=uiaxes();
     end
-    pose=hex_obj.pose;
-    r0 = pose(1:3); % assuming position is first three elements of pose (x,y,z)
-    r=r0+hex_obj.Home;
-    E = pose(4:6); % assuming Euler angles are next three elements of pose (phi,theta,psi)
-    
-    r_rel = hex_obj.r_rel; % need the relative position of the point of interest in platform frame
-    base = hex_obj.base; % need the locations of the base joints in world frame
-    plat = hex_obj.plat; % need the locations of the platform joints in platform frame (assume when E=0, the world and platform frames are aligned)
-    z_min = hex_obj.z; % need minimum vertical distance for visualization purposes
-    L0 = hex_obj.L0; % need minimum link length
-    dL = hex_obj.dL; % need link stroke length
-    
+    % Three-frame chain (matches InverseKinematics_hexapod.m):
+    T_datum_POI  = poseToTransform(hex_obj.pose);
+    T_WD         = composeTransform(hex_obj.T_world_datum_platform, hex_obj.T_platform_POI);
+    T_WQ         = composeTransform(T_WD, T_datum_POI);
+    T_WP         = composeTransform(T_WQ, invertTransform(hex_obj.T_platform_POI));
+    r       = T_WQ.t;    % POI world position (for end-effector marker)
+    plat_CM = T_WP.t;    % platform CM world position
+    R       = T_WP.R;    % platform rotation in world
 
-
-    % Inverse Kinematics
-    R = E2R(E); % convert Euler angles to rotation matrix
-    plat_CM = r - R*r_rel; % platform CM position resolved in world frame; [m]
+    base = hex_obj.base;
+    plat = hex_obj.plat;
+    z_min = hex_obj.z;
+    L0 = hex_obj.L0;
+    dL = hex_obj.dL;
     
     link = zeros(3,6); % each column is a vector describing a link
     p_W = zeros(3,6); % platform link joints resolved in a world frame

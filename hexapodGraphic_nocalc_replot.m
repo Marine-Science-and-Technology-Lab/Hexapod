@@ -1,22 +1,21 @@
 function fig_obj = hexapodGraphic_nocalc_replot(hex_obj,fig_obj)
-    fig_obj
 %     if nargin ~=3 % the first time this function is called, it will great a fig_obj for you
 %         fig_obj = struct();
 %         fig_obj.ax=uiaxes();
 %     end
-    pose=hex_obj.pose;
-    r0 = pose(1:3); % assuming position is first three elements of pose (x,y,z)
-    r=r0+hex_obj.Home;
-    E = pose(4:6); % assuming Euler angles are next three elements of pose (phi,theta,psi)
-    
-    r_rel = hex_obj.r_rel; % need the relative position of the point of interest in platform frame
-    base = hex_obj.base; % need the locations of the base joints in world frame
+    % POI world position via the frame chain (used to draw the
+    % end-effector marker and its axes in world frame).
+    T_WD = composeTransform(hex_obj.T_world_datum_platform, hex_obj.T_platform_POI);
+    T_WQ = composeTransform(T_WD, poseToTransform(hex_obj.pose));
+    r    = T_WQ.t;
+
+    base = hex_obj.base;
     base_link=hex_obj.base_link;
-    plat = hex_obj.plat0; % need the locations of the platform joints in platform frame (assume when E=0, the world and platform frames are aligned)
+    plat = hex_obj.plat0;
     plat_link=hex_obj.plat_link_0;
-    z_min = hex_obj.z; % need minimum vertical distance for visualization purposes
-    L0 = hex_obj.L0; % need minimum link length
-    dL = hex_obj.dL; % need link stroke length
+    z_min = hex_obj.z;
+    L0 = hex_obj.L0;
+    dL = hex_obj.dL;
     ex=hex_obj.ex;ey=hex_obj.ey;ez=hex_obj.ez;
     px=hex_obj.px;py=hex_obj.py;pz=hex_obj.pz;
     pose_platform=hex_obj.pose_platform;

@@ -6,10 +6,15 @@ src = getselectedsource(v);
 src.ExposureMode = "Timed";
 src.TriggerMode = "On";
 
-% File Logging 
-filelocation = "C:\Users\juruiz\Desktop\TestBasler";
-filename = "recording5.avi";
+% File Logging
+scriptDir = fileparts(mfilename('fullpath'));
+filelocation = fullfile(scriptDir, 'Recordings');
+if ~exist(filelocation, 'dir')
+    mkdir(filelocation);
+end
+filename = sprintf('recording_%s.avi', datestr(now, 'yyyymmdd_HHMMSS'));
 fullFilename = fullfile(filelocation, filename);
+fprintf('Logging video to %s\n', fullFilename);
 
 
 % Create and configure the video writer

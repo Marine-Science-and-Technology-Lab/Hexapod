@@ -5,20 +5,41 @@ the_dr = 20*(pi/180); % angular distance between pairs of links (1&2, 3&4, 5&6);
 the_roff = (2*pi - 3*the_dr)/3; % angular distance between off pairs of links (2&3, 4&5, 6&1); [rad]
 base_r = 0.8; % radius of the base links; [m]
 plat_r = 0.4; % radius of the platform links; [m]
-hex_obj.r_rel = [0; 0; 0]; % end effector position relative to plaform CM resolved in platform-fixed frame; [m]
 hex_obj.dL = 0.4394; % maximum link (linear actuator) stroke length; [m]
 hex_obj.L0 = 0.769813+0.04936; % minimum link (linear actuator) length; [m] Includes new spindle length
 
-% hex_obj.MaxLength=hex_obj.L0+hex_obj.dL;
-% hex_obj.Home0=[0;0;-0.95694]; %Home position of hexapod platform, expressed in base frame.
-hex_obj.Home=[0;0;-0.966446+0.000250667]; %Home position of hexapod end effector, expressed in base frame.
-hex_obj.Home_platform=[hex_obj.Home]; % Home position of hexapod platform, expressed in base frame
-hex_obj.Cam=[0; 0; 0;]; % Camera position in base frame
-hex_obj.pose=[0; 0; 0; 0; 0; 0]; %Pose of end effector
-hex_obj.pose_platform=[0; 0; 0; 0; 0; 0]; % Pose of platform
+% --- Three-frame motion model (see Docs/APP_DESIGNER_WIRING.md and the
+% "Datum / POI frames" section of UPGRADE_PLAN.md).
+%
+%   World (W)        base frame. Hexapod geometry (base, plat0, base_link,
+%                    plat_link_0) lives here.
+%   Platform (P)     rigid body of the hexapod platform. Rotates + translates
+%                    as motion commands execute.
+%   POI (Q)          point of interest attached to the platform - the frame
+%                    motion commands describe. Default: coincident with
+%                    platform body origin (identity transform). User sets
+%                    T_platform_POI to describe a mounted test article's
+%                    offset + orientation relative to the platform plate.
+%   Datum (D)        motion-planning origin. At pose = 0 the POI sits at
+%                    the datum origin. The datum frame is derived from
+%                    T_world_datum_platform (where the platform sits at
+%                    pose = 0) composed with T_platform_POI.
+%
+% Motion command: hex_obj.pose = [x; y; z; roll; pitch; yaw] is
+% interpreted as T_datum_POI - the POI's pose relative to the datum.
+% Pose rotation axes are the datum frame's axes (= POI axes at pose = 0).
+
+hex_obj.Home_platform = [0; 0; -0.966446+0.000250667]; % Immutable: physical platform-CM world position after re-homing.
+
+hex_obj.T_world_datum_platform = struct('R', eye(3), 't', hex_obj.Home_platform); % Platform-CM world pose when motion command pose = 0. User-settable via "Set Datum Here" / "Reset Datum to Home".
+hex_obj.T_platform_POI         = struct('R', eye(3), 't', [0; 0; 0]);              % POI pose relative to platform body. User-settable via Coordinate System tab.
+
+hex_obj.Cam = [0; 0; 0];    % Camera position in world frame (Basler checkerboard tracking).
+hex_obj.pose          = zeros(6, 1);   % T_datum_POI expressed as [x; y; z; roll; pitch; yaw].
+hex_obj.pose_platform = zeros(6, 1);   % T_world_platform expressed the same way (populated by IK).
 % Link joints on base in base-fixed frame (base-fixed frame = world frame)
 hex_obj.Base_Zlink=0.0471297; % Height to axis of U joint yoke on platform
-hex_obj.Platform_Zlink=0.0407797%0.04564246; % Height to axis of U joint yoke on base
+hex_obj.Platform_Zlink=0.0407797; %0.04564246; Height to axis of U joint yoke on base
 b_W = zeros(3,1); % origin of base-fixed frame and world frame
 the_b_r1 = 0+the_dr/2+the_roff; % angular position of the first link; [rad]
 
@@ -49,9 +70,9 @@ hex_obj.plati=hex_obj.plat0;
 
 % Locations of linkage attachment points, accounting for offset in UJoint
 % Yokes
-hex_obj.plat_link_0=hex_obj.plat0+repmat([0;0;hex_obj.Platform_Zlink],1,6);
-hex_obj.base_link=hex_obj.base-repmat([0;0;hex_obj.Base_Zlink],1,6);
-hex_obj.plat_link_i=hex_obj.plati+repmat([0;0;hex_obj.Platform_Zlink],1,6); 
+hex_obj.plat_link_0 = hex_obj.plat0 + [0; 0; hex_obj.Platform_Zlink];
+hex_obj.base_link   = hex_obj.base  - [0; 0; hex_obj.Base_Zlink];
+hex_obj.plat_link_i = hex_obj.plati + [0; 0; hex_obj.Platform_Zlink];
 
 
 hex_obj.z=-1.5;
@@ -86,9 +107,9 @@ hex_setup.Actuators.DatumLength_Individual=[1.039726542
 1.039777342
 1.039802742];
 
-hex_setup.UhatRotations=[]
+hex_setup.UhatRotations=[];
 hex_setup.YokeA_Rotations=[50 -170 170 -50 -70 70]; %Rotation angles of yoke A in world frame
-hex_setup.YokeA.Uhat=[50 -170 170 -50 -70 70]
+hex_setup.YokeA.Uhat=[50 -170 170 -50 -70 70];
 
 hex_obj.axisCt=(hex_obj.axisPos-hex_setup.Actuators.DatumLength)*hex_setup.Actuators.CountsPerM;
 hex_obj.axisRel=hex_obj.axisPos-hex_setup.Actuators.DatumLength;

@@ -1,131 +1,208 @@
+function [hex_path] = SimulateMotionProfile_kinematics(hex_obj, hex_setup, hex_path)
+% SimulateMotionProfile_kinematics - Compute link lengths, platform-frame
+% joint positions, and U-joint (AB / CD) yoke angles across a commanded
+% pose trajectory.
+%
+% Vectorized implementation: a single pass over all N timesteps using
+% batched 3x3xN rotation matrices and pagemtimes (R2020b+). Output struct
+% layout matches SimulateMotionProfile_kinematics_legacy.m byte-for-byte
+% within numerical tolerance. See Merged/Docs/UPGRADE_PLAN.md §2.1.
+%
+% Performance: the nine 3x3xN / 3x6xN scratch tensors are cached in a
+% persistent struct keyed on N. Consecutive calls at the same trajectory
+% length reuse the allocations, avoiding MATLAB's zero-fill and heap
+% churn. Very large trajectories (> MAX_CACHE_N samples) bypass the
+% cache to avoid pinning many megabytes of memory indefinitely.
 
-function [hex_path]=SimulateMotionProfile_kinematics(hex_obj,hex_setup,hex_path)
+persistent scratch
+MAX_CACHE_N = 20000;
 
+Time = hex_path.T;
+dt   = hex_path.dt;
 
-Time=hex_path.T;
-dt=hex_path.dt;
+% Build the absolute pose trajectory from the relative one.
+CurrentPose = hex_obj.pose;
+hex_path.pose_t_relative = hex_path.pose_t;
+hex_path.pose_t = hex_path.pose_t_relative + CurrentPose;   % implicit expansion
 
-% By default, the motion is assumed to be relative to the current pose. If
-% absolute motion is specified (e.g. in the point-to-point dialog), the
-% current pose is subtracted from each entry in the pose_t array when the
-% hex_path structure is generated.
-CurrentPose=hex_obj.pose;  
-hex_path.pose_t_relative=hex_path.pose_t; % Create the relative pose array (this is the array generated from the motion-planning functions)
-hex_path.pose_t=hex_path.pose_t_relative+repmat(CurrentPose,1,length(Time)); %Generate a new absolute pose array from the relative by adding the starting pose vector to each timestep.
+% Per-timestep POI pose in datum frame. These *are* the pose commands
+% that came out of the trajectory planner.
+r_DQ = hex_path.pose_t(1:3, :);   % 3 x N  POI translation in datum frame
+E_DQ = hex_path.pose_t(4:6, :);   % 3 x N  POI Euler angles in datum frame (ZYX)
 
-r0=hex_path.pose_t(1:3,:); E=(hex_path.pose_t(4:6,:)); % Timeseries of end effector pose, measured from home position;
-r=r0+repmat(hex_obj.Home,1,size(r0,2));
-r_rel=hex_obj.r_rel;
+base_link = hex_obj.base_link;   % 3 x 6
+plat      = hex_obj.plat0;       % 3 x 6
+plat_link = hex_obj.plat_link_0; % 3 x 6
 
-        r_dt = gradient(r)./dt;
-        E_dt = gradient(E)./dt;
-        r_ddt = gradient(r_dt)./dt;
-        E_ddt = gradient(E_dt)./dt;
+% U-joint reference unit vectors (one per joint; constant across time)
+ujoint_angle = hex_setup.YokeA.Uhat;
+u_hat = [cosd(ujoint_angle(:).'); sind(ujoint_angle(:).'); zeros(1, 6)];  % 3 x 6
+w_hat = [0; 0; -1];
 
-  base = hex_obj.base; % need the locations of the base joints in world frame
- base_link=hex_obj.base_link; % Attachment points of base U-joints. Includes vertical offset equal to base_Zlink parameter (set in initialization function)
-      
- plat = hex_obj.plat0; % need the locations of the platform joints in platform frame (assume when E=0, the world and platform frames are aligned)
-    plat_link=hex_obj.plat_link_0; % Attachment points of platform-side Ujoints in platform coordinates. Includes local plat_Zlink offset for yoke height.
-   
-    
-    z_min = hex_obj.z; % need minimum vertical distance for visualization purposes
-    L0 = hex_obj.L0; % need minimum link length
-    dL = hex_obj.dL; % need link stroke length
+% --- Batch POI rotation matrices R_DQ from the commanded Euler -------
+N  = size(r_DQ, 2);
+cE = cos(E_DQ); sE = sin(E_DQ);   % each is 3 x N
 
-    % U-joint kinematics
-    ujoint_angle = hex_setup.YokeA.Uhat;
-    % Convert angles to unit vector
-    u_hat = [cosd(ujoint_angle(1)) cosd(ujoint_angle(2)) cosd(ujoint_angle(3)) cosd(ujoint_angle(4)) cosd(ujoint_angle(5)) cosd(ujoint_angle(6));
-    sind(ujoint_angle(1)) sind(ujoint_angle(2)) sind(ujoint_angle(3)) sind(ujoint_angle(4)) sind(ujoint_angle(5)) sind(ujoint_angle(6));
-    0 0 0 0 0 0];
-
-    % w_hat for the AB joint
-    w_hat = [0;0;-1];
-   
-    clearvars plati lhat joint_AB joint_CD;
-
-for j = 1:size(r,2)
-
-     R = E2R(E(:,j)); % convert Euler angles to rotation matrix
-    %hex_path.rmatrix(:,:,j)=R;
-    z_dir = R(:,3);
-    plat_CM = r(:,j) - R*r_rel; % platform CM position resolved in world frame; [m]
-
-    link = zeros(3,6); % each column is a vector describing a link
-    p_W = zeros(3,6); % platform link joints resolved in a world frame
-    l_W = zeros(3,6); % platform linkage joints resolved in a world frame
-   
-    q = zeros(6,1); % link lengths; [m]
-    l_hat = zeros(3,6); % unit vectors describing longitudinal axis of links (base to platform) resolved in world frame
-
-    for i = 1:6
-        p_W(:,i) = plat_CM + R*plat(:,i); %Platform vertices.
-        l_W(:,i)= plat_CM+ R*(plat_link(:,i)); %Platform yoke centers
-        link(:,i) = l_W(:,i) - (base_link(:,i));
-        q(i) = sqrt(link(:,i)'*link(:,i));
-        l_hat(:,i) = link(:,i)./q(i);
-        hex_path.lhat(:,i,j)=l_hat(:,i);
-
-        % Calculating U-joint Kinematics for joint AB and joint CD
-         % Computing AB joint Kinematics
-        u_temp = u_hat(:,i);
-        l_temp =l_hat(:,i);
-        v_temp_AB = cross(u_temp,l_temp);
-        c_temp = cross(u_temp,v_temp_AB);
-        v_star_temp = v_temp_AB - (v_temp_AB.'*w_hat)*w_hat;
-        angle_theta(i) = acos((v_temp_AB).'*v_star_temp/(norm(v_temp_AB)*norm(v_star_temp)));
-        angle_phi(i) = acos((-1*l_temp).'*c_temp/(norm(-1*l_temp)*norm(c_temp)));
-        % v(:,i) = v_temp;
-        % c(:,i) = c_temp;
-        % v_star(:,i) = v_star_temp;
-    
-        % Computing CD joint kinematics
-        q_temp = R*u_temp;
-        v_temp_CD = cross(q_temp,l_temp);
-        r_temp = cross(q_temp,v_temp_CD);
-        v_star_temp2 = v_temp_CD - (v_temp_CD.'*z_dir)*z_dir;
-        angle_psi(i) = acos((v_temp_CD).'*v_star_temp2/(norm(v_temp_CD)*norm(v_star_temp2)));
-        angle_alpha(i) = acos((-1*l_temp).'*r_temp/(norm(-1*l_temp)*norm(r_temp)));
-        %v_star2(:,i) = v_star_temp2;
-        % q(:,i) = q_temp;
-        % r(:,i) = r_temp;
-    end
-
-    hex_path.plati(:,:,j)=p_W;
-    hex_obj.plat_link_i=l_W;
-
-joint_AB.angle_theta(:,j) = angle_theta;
-    joint_AB.angle_phi(:,j) =angle_phi;
-   joint_CD.angle_alpha(:,j) = angle_alpha;
-   joint_CD.angle_psi(:,j) = angle_psi;
-
-%     if sum(q >= L0) ~= 6 || sum(q <= L0+dL) ~= 6
-%         check(j) = 1;
-%     end
-    linkl(:,j)=q(:);
-
-    
+% Acquire scratch tensors from the cache if N matches, otherwise
+% allocate fresh. The cache itself is bypassed for very long
+% trajectories to keep peak memory bounded.
+use_cache = (N <= MAX_CACHE_N);
+if use_cache && ~isempty(scratch) && scratch.N == N
+    R_DQ = scratch.R_DQ;
+    v_AB = scratch.v_AB;
+    c    = scratch.c;
+    v_CD = scratch.v_CD;
+    r_CD = scratch.r_CD;
+else
+    R_DQ = zeros(3, 3, N);
+    v_AB = zeros(3, 6, N);
+    c    = zeros(3, 6, N);
+    v_CD = zeros(3, 6, N);
+    r_CD = zeros(3, 6, N);
 end
 
-hex_path.joint_AB=joint_AB; hex_path.joint_CD=joint_CD;
+R_DQ(1,1,:) = cE(3,:) .* cE(2,:);
+R_DQ(1,2,:) = cE(3,:) .* sE(2,:) .* sE(1,:) - sE(3,:) .* cE(1,:);
+R_DQ(1,3,:) = cE(3,:) .* sE(2,:) .* cE(1,:) + sE(3,:) .* sE(1,:);
+R_DQ(2,1,:) = sE(3,:) .* cE(2,:);
+R_DQ(2,2,:) = sE(3,:) .* sE(2,:) .* sE(1,:) + cE(3,:) .* cE(1,:);
+R_DQ(2,3,:) = sE(3,:) .* sE(2,:) .* cE(1,:) - cE(3,:) .* sE(1,:);
+R_DQ(3,1,:) = -sE(2,:);
+R_DQ(3,2,:) = cE(2,:) .* sE(1,:);
+R_DQ(3,3,:) = cE(2,:) .* cE(1,:);
 
-linkv=gradient(linkl)/dt;
-linkacc=gradient(linkv)/dt;
-hex_obj.link_vector=link;
+% --- Frame chain: T_world_plat = T_WD * T_DQ * invert(T_PQ) ----------
+% Constants:
+T_WD = composeTransform(hex_obj.T_world_datum_platform, hex_obj.T_platform_POI);  % T_world_datum
+T_PQ_R_inv = hex_obj.T_platform_POI.R';
+T_PQ_t_neg = -T_PQ_R_inv * hex_obj.T_platform_POI.t;                               % 3 x 1
 
-hex_path.pose_dt=[r_dt;E_dt]; %Rate of change of platform pose
-hex_path.pose_ddt=[r_ddt;E_ddt]; %Platform accelerations in world frame
-hex_path.axis_t=linkl;
-hex_path.axis_dt=linkv;
-hex_path.axis_ddt=linkacc;
+% Per-timestep T_world_POI: R = T_WD.R * R_DQ, t = T_WD.R * r_DQ + T_WD.t
+R_WQ = pagemtimes(T_WD.R, R_DQ);                                                   % 3 x 3 x N
+t_WQ = T_WD.R * r_DQ + T_WD.t;                                                     % 3 x N
 
-[hex_path.axis_cts null]=LengthToEncoder(hex_setup,linkl);
+% Per-timestep T_world_plat: R = R_WQ * T_PQ.R', t = R_WQ * (-T_PQ.R' * T_PQ.t) + t_WQ
+R = pagemtimes(R_WQ, T_PQ_R_inv);                                                  % 3 x 3 x N (platform orientation)
+plat_CM = reshape(pagemtimes(R_WQ, T_PQ_t_neg), 3, N) + t_WQ;                      % 3 x N (platform CM world)
 
-hex_path.joint_separation.AB=hex_setup.Joint_Interp.SCAT_AB(rad2deg(hex_path.joint_AB.angle_theta),rad2deg(hex_path.joint_AB.angle_phi));
-hex_path.joint_separation.CD=hex_setup.Joint_Interp.SCAT_CD(rad2deg(hex_path.joint_CD.angle_alpha),rad2deg(hex_path.joint_CD.angle_psi));
+% Derivatives - computed on the POI trajectory (same semantics as the
+% pre-frame-refactor code, which used POI translation and platform/POI
+% Euler interchangeably because they were assumed identical).
+r_dt   = gradient(t_WQ)  ./ dt;
+E_dt   = gradient(E_DQ)  ./ dt;
+r_ddt  = gradient(r_dt)  ./ dt;
+E_ddt  = gradient(E_dt)  ./ dt;
 
-hex_path.collisioncheck=max([hex_path.joint_separation.AB' hex_path.joint_separation.CD']<=hex_setup.collisionthreshold);
+% z_dir per timestep (platform local +Z resolved in world)
+z_dir = reshape(R(:, 3, :), 3, N);                 % 3 x N
 
-% [fname fpath]=uiputfile()
-% save([fpath fname],'hex_path','-mat')
+plat_CM3 = reshape(plat_CM, 3, 1, N);              % for broadcast to 3 x 6 x N
+
+% --- Joint positions resolved in world frame ---------------------------
+p_W = pagemtimes(R, plat)      + plat_CM3;          % 3 x 6 x N
+l_W = pagemtimes(R, plat_link) + plat_CM3;          % 3 x 6 x N
+link = l_W - base_link;                             % 3 x 6 x N (base_link broadcasts over N)
+
+q     = vecnorm(link, 2, 1);                        % 1 x 6 x N
+l_hat = link ./ q;                                  % 3 x 6 x N
+
+hex_path.lhat  = l_hat;
+hex_path.plati = p_W;
+
+linkl = reshape(q, 6, N);                           % 6 x N
+
+% --- U-joint kinematics (AB and CD) ------------------------------------
+% u_hat is 3 x 6, constant in time; broadcast over the 3rd dim.
+U = u_hat;                                          % 3 x 6 (broadcasts)
+
+% v_AB = cross(u_hat, l_hat), componentwise (avoids repmat; reuses the
+% cached v_AB scratch tensor from above).
+v_AB(1, :, :) = U(2, :) .* l_hat(3, :, :) - U(3, :) .* l_hat(2, :, :);
+v_AB(2, :, :) = U(3, :) .* l_hat(1, :, :) - U(1, :) .* l_hat(3, :, :);
+v_AB(3, :, :) = U(1, :) .* l_hat(2, :, :) - U(2, :) .* l_hat(1, :, :);
+
+% c = cross(u_hat, v_AB)
+c(1, :, :) = U(2, :) .* v_AB(3, :, :) - U(3, :) .* v_AB(2, :, :);
+c(2, :, :) = U(3, :) .* v_AB(1, :, :) - U(1, :) .* v_AB(3, :, :);
+c(3, :, :) = U(1, :) .* v_AB(2, :, :) - U(2, :) .* v_AB(1, :, :);
+
+% v_star = v_AB - (v_AB . w_hat) * w_hat
+vAB_dot_w  = sum(v_AB .* w_hat, 1);                 % 1 x 6 x N
+v_star_AB  = v_AB - vAB_dot_w .* w_hat;
+
+% angle_theta = acos((v_AB . v_star_AB) / (|v_AB| * |v_star_AB|))
+vAB_dot_star = sum(v_AB .* v_star_AB, 1);
+vAB_norm     = vecnorm(v_AB, 2, 1);
+vstar_norm   = vecnorm(v_star_AB, 2, 1);
+angle_theta  = reshape(acos(vAB_dot_star ./ (vAB_norm .* vstar_norm)), 6, N);
+
+% angle_phi = acos((-l_hat . c) / (|l_hat| * |c|))
+l_dot_c  = sum(l_hat .* c, 1);
+l_norm   = vecnorm(l_hat, 2, 1);
+c_norm   = vecnorm(c, 2, 1);
+angle_phi = reshape(acos(-l_dot_c ./ (l_norm .* c_norm)), 6, N);
+
+% CD joint: q_temp = R * u_hat(:,i) for each time step
+Q = pagemtimes(R, u_hat);                           % 3 x 6 x N
+
+% v_CD = cross(Q, l_hat) (reuses cached v_CD scratch tensor)
+v_CD(1, :, :) = Q(2, :, :) .* l_hat(3, :, :) - Q(3, :, :) .* l_hat(2, :, :);
+v_CD(2, :, :) = Q(3, :, :) .* l_hat(1, :, :) - Q(1, :, :) .* l_hat(3, :, :);
+v_CD(3, :, :) = Q(1, :, :) .* l_hat(2, :, :) - Q(2, :, :) .* l_hat(1, :, :);
+
+% r_CD = cross(Q, v_CD)
+r_CD(1, :, :) = Q(2, :, :) .* v_CD(3, :, :) - Q(3, :, :) .* v_CD(2, :, :);
+r_CD(2, :, :) = Q(3, :, :) .* v_CD(1, :, :) - Q(1, :, :) .* v_CD(3, :, :);
+r_CD(3, :, :) = Q(1, :, :) .* v_CD(2, :, :) - Q(2, :, :) .* v_CD(1, :, :);
+
+% v_star_CD = v_CD - (v_CD . z_dir) * z_dir, with z_dir broadcast over joints
+z_dir3     = reshape(z_dir, 3, 1, N);
+vCD_dot_z  = sum(v_CD .* z_dir3, 1);
+v_star_CD  = v_CD - vCD_dot_z .* z_dir3;
+
+vCD_dot_star = sum(v_CD .* v_star_CD, 1);
+vCD_norm     = vecnorm(v_CD, 2, 1);
+vstar2_norm  = vecnorm(v_star_CD, 2, 1);
+angle_psi    = reshape(acos(vCD_dot_star ./ (vCD_norm .* vstar2_norm)), 6, N);
+
+l_dot_r   = sum(l_hat .* r_CD, 1);
+rCD_norm  = vecnorm(r_CD, 2, 1);
+angle_alpha = reshape(acos(-l_dot_r ./ (l_norm .* rCD_norm)), 6, N);
+
+% --- Assemble output ---------------------------------------------------
+joint_AB = struct('angle_theta', angle_theta, 'angle_phi',   angle_phi);
+joint_CD = struct('angle_alpha', angle_alpha, 'angle_psi',   angle_psi);
+hex_path.joint_AB = joint_AB;
+hex_path.joint_CD = joint_CD;
+
+linkv   = gradient(linkl) / dt;
+linkacc = gradient(linkv) / dt;
+
+hex_path.pose_dt  = [r_dt;  E_dt];
+hex_path.pose_ddt = [r_ddt; E_ddt];
+hex_path.axis_t   = linkl;
+hex_path.axis_dt  = linkv;
+hex_path.axis_ddt = linkacc;
+
+[hex_path.axis_cts, ~] = LengthToEncoder(hex_setup, linkl);
+
+hex_path.joint_separation.AB = hex_setup.Joint_Interp.SCAT_AB( ...
+    rad2deg(hex_path.joint_AB.angle_theta), rad2deg(hex_path.joint_AB.angle_phi));
+hex_path.joint_separation.CD = hex_setup.Joint_Interp.SCAT_CD( ...
+    rad2deg(hex_path.joint_CD.angle_alpha), rad2deg(hex_path.joint_CD.angle_psi));
+
+hex_path.collisioncheck = max([hex_path.joint_separation.AB' hex_path.joint_separation.CD'] ...
+    <= hex_setup.collisionthreshold);
+
+% Persist scratch tensors for the next call at this same N.
+if use_cache
+    scratch = struct( ...
+        'N',    N, ...
+        'R_DQ', R_DQ, ...
+        'v_AB', v_AB, ...
+        'c',    c,    ...
+        'v_CD', v_CD, ...
+        'r_CD', r_CD);
+end
+
+end

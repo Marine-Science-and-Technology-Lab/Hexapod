@@ -1,0 +1,26 @@
+# MATLAB autosaves and backups
+*.asv
+*.m~
+*.bak
+
+# MATLAB Compiler build outputs
+for_redistribution/
+for_redistribution_files_only/
+for_testing/
+PackagingLog.html
+*_resources/
+*.mlappinstall
+
+# MATLAB workspace dumps and scratch
+Temp/
+*.autosave
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+*.lnk
+
+# Project-local editor settings (keep if you want them shared)
+.vscode/
+.idea/

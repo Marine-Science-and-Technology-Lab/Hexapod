@@ -2,7 +2,12 @@ function [hex_path]=SimulateMotionProfile_dynamics(hex_obj,hex_setup,hex_path,in
 
 Time=hex_path.T;
 dt=hex_path.dt;
-r_rel=hex_obj.r_rel;
+% POI offset (translation) from platform CM, expressed in the platform
+% body frame. Used for the parallel-axis term on the effector inertia.
+% If a non-identity POI rotation is ever set, this needs to be revisited
+% to include the inertia-tensor rotation - for now the rotation of the
+% POI only affects where motion commands are interpreted, not inertia.
+r_rel = hex_obj.T_platform_POI.t;
 
 I_platform=diag([hex_setup.Platform.Ixx hex_setup.Platform.Iyy hex_setup.Platform.Izz]);
 I_model0=diag([hex_setup.Effector.Ixx hex_setup.Effector.Iyy hex_setup.Effector.Izz]);
@@ -16,21 +21,19 @@ E_ddt=pose_ddt(4:6,:);
 
 N_t=length(Time);
 
-F_inertial=M_total*(r_ddt+repmat([0;0;9.81],1,length(r_ddt)));
+F_inertial = M_total * (r_ddt + [0;0;9.81]);
 if includeFex
-F_ext=[hex_setup.F_ex.Fx;hex_setup.F_ex.Fy;hex_setup.F_ex.Fz];
+    F_ext = [hex_setup.F_ex.Fx; hex_setup.F_ex.Fy; hex_setup.F_ex.Fz];
 else
-    F_ext=[0;0;0];
+    F_ext = [0;0;0];
 end
-F_total=F_inertial+repmat(F_ext,1,size(F_inertial,2));
+F_total = F_inertial + F_ext;
 
-T_ext=cross(r_rel,F_ext);
+T_ext = cross(r_rel, F_ext);
 
-for nt=1:N_t;
-    T_inertial(:,nt)=I_total*E_ddt(:,nt);
-end
+T_inertial = I_total * E_ddt;   % (3x3)*(3xN) -> 3xN
 
-T_total=T_inertial+repmat(T_ext,1,size(T_inertial,2));
+T_total = T_inertial + T_ext;
 
 L_total=[F_total;T_inertial];
 

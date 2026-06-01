@@ -1,88 +1,38 @@
-function [exitcond] = StreamContourData_to_Galil(g,hex_path,trigger_flag,record_flag)
+function [exitcond, record] = StreamContourData_to_Galil(g, hex_path, trigger_flag, record_flag, cancel_token)
+% StreamContourData_to_Galil - Synchronous wrapper around
+% ContourStreamSession. Kept for backward compatibility with the
+% existing tests and script-style callers.
+%
+% New code (app callbacks, especially anything that should remain
+% responsive while streaming runs) should prefer ContourStreamSession
+% directly and supply an on_complete handler. The session runs the
+% state machine on a MATLAB timer, so the caller returns immediately
+% and other timers (encoder DROs, animation) and UI events get
+% guaranteed airtime between ticks without needing drawnow sprinkled
+% inside a blocking loop.
+%
+% This wrapper simply creates a session, then polls isDone() on a
+% pause(0.05) loop so the MATLAB event loop still services timers and
+% cancel-token clicks while we wait. See ContourStreamSession.m for
+% full state-machine / soft-stop / buffer-health details.
+%
+% Inputs / Outputs: identical to the pre-session version. See the
+% header of ContourStreamSession for a fuller description of each
+% field (cancel_token, record struct, buffer_health, etc.).
 
-yy=hex_path.axis_cts';
-ydiff=diff(round(yy)); %Relative move commands sent to contour buffer
+if nargin < 3 || isempty(trigger_flag);  trigger_flag = 0; end
+if nargin < 4 || isempty(record_flag);   record_flag  = 0; end
+if nargin < 5;                           cancel_token = []; end
 
-DT_g=round(log2(hex_path.dt*1024));
-%CONTOUR 
-g.GInfo
-g.GCommand('CO 15') % Configure all GPIO as output
- g.GCommand('ST') % Stop any current execution
-g.GCommand('SH ABCEFG') % servo motors ABCEFG
+session = ContourStreamSession(g, hex_path, ...
+    trigger_flag, record_flag, cancel_token, []);
 
-TargetBuff=250; %Target number of empty samples to maintain in buffer (buffer is 512 samples long).
-N=length(ydiff); 
-cmdArrays = ceil(N/TargetBuff);
+cleanup = onCleanup(@() delete(session));
 
-
-posStr = "CD "+string(ydiff(:,1))+","+string(ydiff(:,2))+","+...
-    string(ydiff(:,3))+","+","+string(ydiff(:,4))+","+string(ydiff(:,5))+...
-    ","+string(ydiff(:,6))+";";
-
-
-% If the pulsed trigger output is desired, this will upload and execute the
-% program to generate a square wave.
-if trigger_flag
-CMD2=sprintf('#Pulse; \n SB 33; \n #A; \n SB 25; \n SB 17; \n WT16,1; \n CB 25; \n CB 17; \n WT16,1; \n JP #A; \n CB 25; \n CB 17; \n EN');
-g.GProgramDownload(CMD2);
-g.GCommand('XQ #Pulse,2');
+while ~session.isDone()
+    pause(0.05);   % yields to MATLAB event loop: timers + UI callbacks fire
 end
 
-g.GCommand('CMABCEFG') %Enter contour mode
-g.GCommand(['DT ' num2str(DT_g)]) %Set the timestep size in number of samples
-
-n=1;
-i=1;
-j=0;
-
-% hwait=waitbar(0,'Streaming Coordinates To Galil')
-
-
-while n<cmdArrays+1
-    buffsize=g.GCommand('CM?');
-% waitbar(n/(cmdArrays+1))
-    if(str2num(buffsize.string) >= TargetBuff)
-
-        if(length(posStr)<j+TargetBuff)
-
-            command =strjoin(posStr(i:end,1));
-        else
-            command =strjoin(posStr((i):(j+TargetBuff),1));
-        end
-        g.GCommand(command); % CD specifies the incremental position
-
-        n=n+1;
-        i=i+TargetBuff;
-        j=j+TargetBuff;
-    else
-        % Print buffer size
-        %"Buffer_size"
-        %str2num(buffsize.string)
-    end
-% if ~ishandle(hwait)
-%     break
-% end
+exitcond = session.exitcond;
+record   = session.record;
 end
-
-
-buffsizen=1;
-while buffsizen~=511
-    buffsize=g.GCommand('CM?');
-    buffsizen=str2num(buffsize.string);
-%     waitbar(buffsizen/(511),'Draining Buffer');
-%     if ~ishandle(hwait)
-%     break
-% end
-end
-g.GCommand('CD 0,0,0,,0,0,0=0') % end of counter buffer
-g.GCommand('CB25')
-g.GCommand('CB17')
-g.GCommand('CB33')
-g.GCommand('ST')
-
-%  g.GMotionComplete('ABCEFG')
-% g.GCommand('PA 0,0,0,,0,0,0')
-% g.GCommand('BGABCEFG')
-exitcond='DONE';
-end
-

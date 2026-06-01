@@ -1,0 +1,22 @@
+# Force Windows-style line endings on MATLAB sources (project is Windows+MATLAB).
+*.m        text eol=crlf
+*.prj      text eol=crlf
+*.dmc      text eol=crlf
+*.md       text eol=crlf
+LICENSE    text eol=crlf
+
+# Treat MATLAB App Designer bundles and binary assets as binary (no EOL munging, no diff).
+*.mlapp          binary
+*.mlappinstall   binary
+*.mat            binary
+*.mldatx         binary
+*.xlsx           binary
+*.STL            binary
+*.stl            binary
+*.png            binary
+*.jpg            binary
+*.mp4            binary
+*.dll            binary
+*.exe            binary
+*.SLDPRT         binary
+*.SLDASM         binary
